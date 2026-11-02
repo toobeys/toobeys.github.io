@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Toobey • Admin Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+if(!window.supabase){
+  document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"><\/script>');
+}
+</script>
 
 <style>
 *{box-sizing:border-box}
@@ -485,7 +490,17 @@ input[type=file]{display:none}
 const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+if(!window.supabase || typeof window.supabase.createClient !== "function"){
+  document.addEventListener("DOMContentLoaded", () => {
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;inset:20px;z-index:99999;background:#0b1224;color:#f8fafc;border:1px solid rgba(239,68,68,.5);border-radius:18px;padding:24px;font:14px/1.6 system-ui,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.45)";
+    box.innerHTML = "<strong>Supabase belum termuat.</strong><br>Refresh halaman. Jika pesan ini tetap muncul, buka Console (F12) dan cek apakah CDN Supabase diblokir oleh browser/jaringan.";
+    document.body.appendChild(box);
+  });
+  throw new Error("Supabase library failed to load");
+}
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let profileRecord = null;
@@ -493,6 +508,11 @@ let themeRecord = null;
 let links = [];
 let selectedDesign = "aurora";
 let profileAvatarUrl = null;
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+  if(event === "SIGNED_OUT") window.location.href = "admin.html";
+});
 
 const $ = id => document.getElementById(id);
 
@@ -802,6 +822,14 @@ window.uploadLinkIcon = async function(index,file){
 
   if(!link) return;
 
+  const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+  if(sessionError || !sessionData?.session){
+    alert("Session login admin tidak ditemukan. Silakan login ulang.");
+    window.location.href = "admin.html";
+    return;
+  }
+
+  currentUser = sessionData.session.user;
   setStatus("Mengupload icon...");
 
   const extension = file.name.split(".").pop().toLowerCase() || "png";
