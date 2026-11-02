@@ -76,8 +76,8 @@ button{cursor:pointer}
 .brand-sub{font-size:12px;color:#64748b;margin-top:5px}
 .nav{display:flex;flex-direction:column;gap:7px}
 .nav button{
-  width:100%;height:76px;border:1px solid rgba(148,163,184,.10);background:rgba(15,23,42,.30);
-  color:#94a3b8;text-align:center;padding:9px 6px;border-radius:12px;font-weight:800;
+  width:100%;height:82px;aspect-ratio:1 / 1;border:1px solid rgba(148,163,184,.10);background:rgba(15,23,42,.30);
+  color:#94a3b8;text-align:center;padding:8px;border-radius:10px;font-weight:800;
   transition:.22s;min-height:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:5px
 }
@@ -203,14 +203,8 @@ input[type=file]{display:none}
 .color-control{display:flex;gap:10px;align-items:center}
 .color-control input[type=color]{width:55px;height:43px;padding:3px}
 .design-workspace{position:relative}
-.design-workspace > .card:not(.preview-layout){max-width:calc(100% - 382px)}
-.design-workspace > .preview-layout{
-  position:absolute;right:0;top:0;width:360px;margin:0;
-  display:flex;flex-direction:column;gap:14px;
-  padding:18px;z-index:2
-}
-.design-workspace > .preview-layout > div:first-child{display:block}
-.design-workspace > .preview-layout .preview-phone{max-width:100%;width:100%;height:570px}
+
+
 
 .preview-phone{
   width:100%;max-width:340px;height:620px;margin:auto;border:9px solid #020617;
@@ -229,11 +223,6 @@ input[type=file]{display:none}
 .empty{text-align:center;padding:30px;color:#64748b;border:1px dashed var(--border);border-radius:14px}
 .help{font-size:12px;color:#64748b;margin-top:6px}
 @media(max-width:1100px){
-  .design-workspace > .card:not(.preview-layout){max-width:none}
-  .design-workspace > .preview-layout{
-    position:static;width:auto;margin-bottom:18px;
-  }
-
   .design-grid{grid-template-columns:repeat(2,1fr)}
   .preview-layout{grid-template-columns:1fr}.preview-phone{max-width:330px}
 }
@@ -249,6 +238,21 @@ input[type=file]{display:none}
   .savebar{position:sticky;bottom:8px}
 }
 @media(max-width:480px){.design-grid{grid-template-columns:1fr}.link-actions{flex-wrap:wrap}}
+
+.dashboard-workspace{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+.editor-column{min-width:0}
+.persistent-preview{position:sticky;top:18px;display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--border);border-radius:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.preview-head strong{display:block;font-size:14px;color:#f8fafc}
+.preview-head span{display:block;font-size:11px;color:#64748b;margin-top:3px}
+.persistent-preview .preview-phone{height:calc(100vh - 145px);min-height:520px;max-height:760px}
+.persistent-preview iframe{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.28) transparent}
+.persistent-preview iframe::-webkit-scrollbar{width:5px}
+.persistent-preview iframe::-webkit-scrollbar-track{background:transparent}
+.persistent-preview iframe::-webkit-scrollbar-thumb{background:rgba(148,163,184,.24);border-radius:999px}
+.persistent-preview iframe::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.42)}
+@media(max-width:1100px){.dashboard-workspace{grid-template-columns:minmax(0,1fr) 320px}.persistent-preview .preview-phone{height:600px;min-height:0}}
+@media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}}
 </style>
 </head>
 
@@ -268,7 +272,6 @@ input[type=file]{display:none}
   </nav>
 
   <div class="sidebar-bottom">
-    <a class="public-btn" href="./" target="_blank">🌐 Lihat Website</a>
     <button class="logout-btn" id="logoutBtn">Keluar</button>
   </div>
 </aside>
@@ -282,7 +285,8 @@ input[type=file]{display:none}
     <div id="authState" class="status">Memuat...</div>
   </header>
 
-  <div class="content-wrap">
+  <div class="content-wrap dashboard-workspace">
+    <div class="editor-column">
 
     <section class="tab active" id="tab-content">
       <div class="section-head">
