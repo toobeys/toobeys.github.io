@@ -3,2591 +3,1021 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Toobey Admin</title>
+<title>Toobey Admin Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --bg: #071126;
-  --panel: #0b1730;
-  --panel2: #101f3d;
-  --border: rgba(255,255,255,.10);
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --blue: #3b82f6;
-  --blue2: #60a5fa;
-  --danger: #ef4444;
-  --success: #10b981;
-}
-
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-body {
-  overflow-x: hidden;
-}
-
-/* =========================
-   APP
-========================= */
-
-.app {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 220px minmax(420px, 1fr) 380px;
-}
-
-/* =========================
-   SIDEBAR
-========================= */
-
-.sidebar {
-  background: rgba(4,12,29,.96);
-  border-right: 1px solid var(--border);
-  padding: 24px 14px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-
-.brand {
-  padding: 5px 12px 28px;
-}
-
-.brand-title {
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.brand-title span {
-  color: var(--blue2);
-}
-
-.brand-subtitle {
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.nav button {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: #cbd5e1;
-  text-align: left;
-  padding: 13px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.nav button:hover {
-  background: rgba(255,255,255,.06);
-}
-
-.nav button.active {
-  background: rgba(59,130,246,.18);
-  color: white;
-}
-
-.nav-icon {
-  display: inline-block;
-  width: 26px;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-.main {
-  min-width: 0;
-  padding: 24px 30px 100px;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 28px;
-}
-
-.topbar-title {
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.topbar-subtitle {
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.top-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* =========================
-   TAB
-========================= */
-
-.tab {
-  display: none;
-}
-
-.tab.active {
-  display: block;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.card {
-  background: rgba(255,255,255,.045);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px;
-  margin-bottom: 18px;
-}
-
-.card-title {
-  margin: 0 0 5px;
-  font-size: 17px;
-}
-
-.card-description {
-  margin: 0 0 22px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* =========================
-   FORM
-========================= */
-
-label {
-  display: block;
-  margin: 0 0 7px;
-  color: #cbd5e1;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 12px 13px;
-  margin-bottom: 17px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px;
-  background: rgba(0,0,0,.22);
-  color: white;
-  outline: none;
-  font-family: inherit;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: var(--blue2);
-}
-
-textarea {
-  min-height: 105px;
-  resize: vertical;
-}
-
-input[type="color"] {
-  height: 45px;
-  padding: 4px;
-  cursor: pointer;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-button {
-  font-family: inherit;
-}
-
-.btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.btn-primary {
-  background: var(--blue);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #2563eb;
-}
-
-.btn-secondary {
-  background: rgba(255,255,255,.08);
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: rgba(255,255,255,.13);
-}
-
-.btn-danger {
-  background: rgba(239,68,68,.14);
-  color: #fca5a5;
-}
-
-.btn-danger:hover {
-  background: rgba(239,68,68,.24);
-}
-
-.btn-success {
-  background: var(--success);
-  color: white;
-}
-
-/* =========================
-   LINKS
-========================= */
-
-.link-item {
-  background: rgba(0,0,0,.18);
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 16px;
-  padding: 17px;
-  margin-bottom: 13px;
-}
-
-.link-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.link-head-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.drag {
-  color: #64748b;
-  cursor: grab;
-  font-size: 18px;
-}
-
-.link-number {
-  font-weight: 800;
-  color: #93c5fd;
-}
-
-.link-status {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(16,185,129,.12);
-  color: #6ee7b7;
-}
-
-.link-status.off {
-  background: rgba(148,163,184,.12);
-  color: #94a3b8;
-}
-
-.icon-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.icon-box {
-  width: 58px;
-  height: 58px;
-  flex: 0 0 58px;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.12);
-  font-size: 27px;
-}
-
-.icon-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.upload-label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 9px 12px;
-  border-radius: 9px;
-  background: rgba(255,255,255,.08);
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.upload-label:hover {
-  background: rgba(255,255,255,.13);
-}
-
-.upload-label input {
-  display: none;
-}
-
-.link-actions {
-  display: flex;
-  gap: 7px;
-  margin-top: 5px;
-}
-
-/* =========================
-   PROFILE
-========================= */
-
-.profile-editor {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  margin-bottom: 25px;
-}
-
-.profile-image {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255,255,255,.14);
-  flex: 0 0 90px;
-}
-
-.profile-upload {
-  flex: 1;
-}
-
-.profile-upload p {
-  color: var(--muted);
-  font-size: 12px;
-  margin: 10px 0 0;
-}
-
-/* =========================
-   DESIGN
-========================= */
-
-.design-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.design-option {
-  border: 2px solid rgba(255,255,255,.09);
-  border-radius: 16px;
-  padding: 10px;
-  cursor: pointer;
-  background: rgba(255,255,255,.03);
-  transition: .2s;
-}
-
-.design-option:hover {
-  border-color: rgba(96,165,250,.5);
-}
-
-.design-option.selected {
-  border-color: var(--blue2);
-  box-shadow: 0 0 0 2px rgba(59,130,246,.12);
-}
-
-.design-preview {
-  height: 125px;
-  border-radius: 11px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  overflow: hidden;
-}
-
-.preview-avatar {
-  width: 27px;
-  height: 27px;
-  border-radius: 50%;
-  background: rgba(255,255,255,.8);
-}
-
-.preview-line {
-  height: 6px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.65);
-  width: 65%;
-}
-
-.preview-card {
-  width: 90%;
-  height: 22px;
-  border-radius: 7px;
-  background: rgba(255,255,255,.18);
-  border: 1px solid rgba(255,255,255,.18);
-}
-
-.aurora-preview {
-  background:
-    radial-gradient(circle at 20% 20%, #3154a4, transparent 45%),
-    radial-gradient(circle at 80% 80%, #663e9c, transparent 45%),
-    #071126;
-}
-
-.midnight-preview {
-  background: #05070d;
-}
-
-.ocean-preview {
-  background:
-    radial-gradient(circle at 20% 20%, #075985, transparent 45%),
-    #04151d;
-}
-
-.purple-preview {
-  background:
-    radial-gradient(circle at 80% 20%, #7e22ce, transparent 45%),
-    #160b25;
-}
-
-.design-name {
-  font-weight: 700;
-  font-size: 12px;
-  margin-top: 8px;
-  text-align: center;
-}
-
-/* =========================
-   LIVE PREVIEW
-========================= */
-
-.preview-panel {
-  border-left: 1px solid var(--border);
-  background: rgba(3,9,22,.92);
-  min-width: 0;
-  padding: 22px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-
-.preview-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.preview-title strong {
-  font-size: 15px;
-}
-
-.preview-title span {
-  font-size: 11px;
-  color: #6ee7b7;
-}
-
-.phone-wrap {
-  display: flex;
-  justify-content: center;
-  height: calc(100vh - 90px);
-  overflow: auto;
-}
-
-.phone {
-  width: 310px;
-  min-height: 600px;
-  height: 660px;
-  max-height: calc(100vh - 100px);
-  border: 7px solid #111827;
-  border-radius: 28px;
-  overflow: hidden;
-  background: #071126;
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
-}
-
-.phone iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* =========================
-   SAVE BAR
-========================= */
-
-.save-bar {
-  position: fixed;
-  bottom: 18px;
-  left: 240px;
-  right: 400px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 12px 15px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 14px;
-  background: rgba(7,17,38,.91);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 10px 35px rgba(0,0,0,.25);
-}
-
-.status {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.save-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty {
-  text-align: center;
-  padding: 35px 15px;
-  color: var(--muted);
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-.mobile-nav {
-  display: none;
-}
-
-@media (max-width: 1200px) {
-
-  .app {
-    grid-template-columns: 205px minmax(400px, 1fr);
-  }
-
-  .preview-panel {
-    display: none;
-  }
-
-  .save-bar {
-    left: 225px;
-    right: 20px;
-  }
-}
-
-@media (max-width: 760px) {
-
-  .app {
-    display: block;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .main {
-    padding: 18px 14px 105px;
-  }
-
-  .mobile-nav {
-    display: flex;
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    background: rgba(4,12,29,.96);
-    border-bottom: 1px solid var(--border);
-    padding: 8px;
-    gap: 5px;
-  }
-
-  .mobile-nav button {
-    flex: 1;
-    border: 0;
-    border-radius: 9px;
-    background: transparent;
-    color: #94a3b8;
-    padding: 10px 5px;
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  .mobile-nav button.active {
-    background: rgba(59,130,246,.18);
-    color: white;
-  }
-
-  .topbar {
-    margin-top: 15px;
-  }
-
-  .topbar-title {
-    font-size: 18px;
-  }
-
-  .top-actions .btn-preview {
-    display: none;
-  }
-
-  .card {
-    padding: 17px;
-  }
-
-  .design-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .profile-editor {
-    flex-direction: column;
-  }
-
-  .save-bar {
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .save-actions {
-    width: 100%;
-  }
-
-  .save-actions button {
-    flex: 1;
-  }
-}
-
-@media (max-width: 430px) {
-
-  .design-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .link-head {
-    align-items: flex-start;
-  }
+*{box-sizing:border-box}
+:root{
+  --bg:#f5f7fb;
+  --panel:#fff;
+  --panel2:#f8fafc;
+  --text:#111827;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --primary:#2563eb;
+  --primary2:#7c3aed;
+  --danger:#dc2626;
+  --shadow:0 12px 35px rgba(15,23,42,.08);
+  --radius:18px;
+}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+.sidebar{
+  width:250px;background:#0f172a;color:#fff;position:fixed;inset:0 auto 0 0;
+  padding:22px 16px;z-index:20;display:flex;flex-direction:column;
+}
+.brand{padding:5px 10px 24px}
+.brand-title{font-size:21px;font-weight:800}
+.brand-sub{font-size:12px;color:#94a3b8;margin-top:4px}
+.nav{display:flex;flex-direction:column;gap:7px}
+.nav button{
+  width:100%;border:0;background:transparent;color:#cbd5e1;text-align:left;
+  padding:13px 14px;border-radius:12px;font-weight:700;
+}
+.nav button:hover,.nav button.active{background:#1e293b;color:#fff}
+.sidebar-bottom{margin-top:auto}
+.public-btn{
+  display:block;text-decoration:none;text-align:center;background:#2563eb;color:#fff;
+  padding:12px;border-radius:12px;font-weight:700;margin-bottom:10px;
+}
+.logout-btn{width:100%;background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:11px;border-radius:12px}
+.main{margin-left:250px;width:calc(100% - 250px);min-width:0}
+.topbar{
+  height:76px;background:rgba(255,255,255,.9);backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:10;
+}
+.top-title{font-size:20px;font-weight:800}
+.top-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.mobile-nav{display:none}
+.content-wrap{padding:28px;max-width:1500px;margin:auto}
+.tab{display:none}
+.tab.active{display:block}
+.section-head{margin-bottom:20px}
+.section-head h2{margin:0;font-size:25px}
+.section-head p{margin:6px 0 0;color:var(--muted)}
+.card{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:18px;
+}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:13px;font-weight:800;margin-bottom:7px}
+input,textarea,select{
+  width:100%;border:1px solid var(--border);background:#fff;color:var(--text);
+  border-radius:11px;padding:11px 12px;outline:none;
+}
+input:focus,textarea:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+textarea{min-height:95px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.btn{
+  border:0;border-radius:11px;padding:10px 14px;font-weight:800;
+}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-secondary{background:#e2e8f0;color:#0f172a}
+.btn-danger{background:#fee2e2;color:#991b1b}
+.btn-small{padding:8px 11px;font-size:12px}
+.profile-layout{display:grid;grid-template-columns:180px 1fr;gap:24px}
+.avatar-box{text-align:center}
+.avatar{
+  width:150px;height:150px;border-radius:50%;object-fit:cover;
+  background:linear-gradient(135deg,#dbeafe,#ede9fe);border:5px solid #fff;
+  box-shadow:0 8px 25px rgba(15,23,42,.15)
+}
+.avatar-placeholder{
+  width:150px;height:150px;border-radius:50%;display:grid;place-items:center;
+  background:#e2e8f0;color:#64748b;font-size:45px;margin:auto
+}
+.upload-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+input[type=file]{display:none}
+.file-label{
+  display:inline-block;background:#e2e8f0;color:#0f172a;padding:9px 12px;
+  border-radius:10px;font-size:12px;font-weight:800;cursor:pointer
+}
+.links-list{display:flex;flex-direction:column;gap:14px}
+.link-card{
+  border:1px solid var(--border);border-radius:16px;padding:17px;background:var(--panel2);
+}
+.link-head{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.link-icon{
+  width:54px;height:54px;border-radius:14px;background:#e2e8f0;object-fit:cover;
+  display:grid;place-items:center;font-size:25px;flex:none
+}
+.link-title-wrap{flex:1;min-width:0}
+.link-number{font-size:11px;color:var(--muted);font-weight:800}
+.link-title-preview{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link-actions{display:flex;gap:7px}
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+.check-row{display:flex;align-items:center;gap:8px}
+.check-row input{width:auto}
+.design-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.design-option{
+  border:2px solid var(--border);border-radius:18px;padding:10px;background:#fff;
+  transition:.2s;cursor:pointer;
+}
+.design-option:hover{transform:translateY(-2px)}
+.design-option.selected{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.design-name{font-size:13px;font-weight:800;margin:9px 3px 2px}
+.design-desc{font-size:11px;color:var(--muted);margin:0 3px 3px}
+.mini-phone{
+  height:190px;border-radius:14px;overflow:hidden;padding:12px;position:relative;
+}
+.mini-profile{width:35px;height:35px;border-radius:50%;background:rgba(255,255,255,.7);margin:5px auto 7px}
+.mini-name{height:8px;width:55%;background:rgba(255,255,255,.8);border-radius:8px;margin:auto}
+.mini-bio{height:5px;width:70%;background:rgba(255,255,255,.5);border-radius:8px;margin:7px auto 12px}
+.mini-link{height:27px;border-radius:9px;background:rgba(255,255,255,.75);margin:7px 0}
+.aurora{background:linear-gradient(145deg,#081426,#142b52 45%,#43286e)}
+.midnight{background:linear-gradient(145deg,#020617,#111827)}
+.ocean{background:linear-gradient(145deg,#082f49,#0369a1 55%,#0e7490)}
+.purple{background:linear-gradient(145deg,#2e1065,#6d28d9 55%,#a21caf)}
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.color-control{display:flex;gap:10px;align-items:center}
+.color-control input[type=color]{width:55px;height:43px;padding:3px}
+.preview-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start}
+.preview-phone{
+  width:100%;max-width:340px;height:620px;margin:auto;border:10px solid #111827;
+  border-radius:34px;background:#0f172a;overflow:hidden;box-shadow:0 20px 45px rgba(15,23,42,.2)
+}
+.preview-phone iframe{width:100%;height:100%;border:0;background:#0f172a}
+.savebar{
+  position:sticky;bottom:15px;z-index:9;background:rgba(15,23,42,.95);color:#fff;
+  border-radius:16px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;box-shadow:0 15px 35px rgba(15,23,42,.25);margin-top:24px
+}
+.status{font-size:13px;color:#cbd5e1}
+.status.success{color:#86efac}
+.status.error{color:#fca5a5}
+.empty{text-align:center;padding:30px;color:var(--muted);border:1px dashed var(--border);border-radius:14px}
+.help{font-size:12px;color:var(--muted);margin-top:6px}
+@media(max-width:1100px){
+  .design-grid{grid-template-columns:repeat(2,1fr)}
+  .preview-layout{grid-template-columns:1fr}
+  .preview-phone{max-width:330px}
+}
+@media(max-width:760px){
+  .sidebar{width:70px;padding:16px 9px}
+  .brand{padding:4px 0 20px;text-align:center}
+  .brand-title{font-size:16px}
+  .brand-sub,.nav button span,.public-btn,.logout-btn{display:none}
+  .nav button{font-size:20px;text-align:center;padding:12px 5px}
+  .main{margin-left:70px;width:calc(100% - 70px)}
+  .topbar{height:auto;min-height:70px;padding:12px 16px}
+  .top-sub{display:none}
+  .content-wrap{padding:16px}
+  .grid2,.link-grid,.color-row,.profile-layout{grid-template-columns:1fr}
+  .design-grid{grid-template-columns:1fr 1fr}
+  .profile-layout{gap:18px}
+  .avatar-box{order:0}
+  .savebar{position:sticky;bottom:8px}
+}
+@media(max-width:480px){
+  .design-grid{grid-template-columns:1fr}
+  .link-actions{flex-wrap:wrap}
 }
 </style>
 </head>
 
 <body>
-
-<!-- MOBILE NAV -->
-
-<nav class="mobile-nav">
-
-  <button
-    class="mobile-tab active"
-    data-tab="content"
-  >
-    🔗 Content
-  </button>
-
-  <button
-    class="mobile-tab"
-    data-tab="header"
-  >
-    👤 Header
-  </button>
-
-  <button
-    class="mobile-tab"
-    data-tab="design"
-  >
-    🎨 Design
-  </button>
-
-</nav>
-
-
 <div class="app">
 
-  <!-- =========================
-       SIDEBAR
-  ========================= -->
-
-  <aside class="sidebar">
-
-    <div class="brand">
-      <div class="brand-title">
-        TOO<span>BEY</span>
-      </div>
-
-      <div class="brand-subtitle">
-        Admin Dashboard
-      </div>
-    </div>
-
-    <nav class="nav">
-
-      <button
-        class="nav-tab active"
-        data-tab="content"
-      >
-        <span class="nav-icon">🔗</span>
-        Content
-      </button>
-
-      <button
-        class="nav-tab"
-        data-tab="header"
-      >
-        <span class="nav-icon">👤</span>
-        Header
-      </button>
-
-      <button
-        class="nav-tab"
-        data-tab="design"
-      >
-        <span class="nav-icon">🎨</span>
-        Design
-      </button>
-
-    </nav>
-
-  </aside>
-
-
-  <!-- =========================
-       MAIN
-  ========================= -->
-
-  <main class="main">
-
-    <header class="topbar">
-
-      <div>
-        <div class="topbar-title">
-          <span id="pageTitle">Content</span>
-        </div>
-
-        <div
-          class="topbar-subtitle"
-          id="pageSubtitle"
-        >
-          Kelola link yang tampil di halaman Toobey.
-        </div>
-      </div>
-
-      <div class="top-actions">
-
-        <button
-          type="button"
-          class="btn btn-secondary btn-preview"
-          onclick="refreshPreview()"
-        >
-          ↻ Preview
-        </button>
-
-      </div>
-
-    </header>
-
-
-    <!-- =========================
-         CONTENT TAB
-    ========================= -->
-
-    <section
-      class="tab active"
-      id="tab-content"
-    >
-
-      <div class="card">
-
-        <h2 class="card-title">
-          🔗 Link Utama
-        </h2>
-
-        <p class="card-description">
-          Atur semua tombol/link yang tampil di halaman utama.
-        </p>
-
-        <div id="linksContainer">
-          Memuat link...
-        </div>
-
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="addLink"
-        >
-          ＋ Tambah Link
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         HEADER TAB
-    ========================= -->
-
-    <section
-      class="tab"
-      id="tab-header"
-    >
-
-      <div class="card">
-
-        <h2 class="card-title">
-          👤 Header Profile
-        </h2>
-
-        <p class="card-description">
-          Atur identitas yang tampil di bagian atas halaman.
-        </p>
-
-
-        <div class="profile-editor">
-
-          <img
-            id="profilePreview"
-            class="profile-image"
-            src="profile.png"
-            alt="Preview profil"
-          >
-
-          <div class="profile-upload">
-
-            <label class="upload-label">
-              📷 Ganti Foto Profil
-
-              <input
-                type="file"
-                id="profileImage"
-                accept="image/*"
-              >
-            </label>
-
-            <p>
-              JPG, PNG atau WEBP. Maksimal 5 MB.
-            </p>
-
-            <button
-              type="button"
-              class="btn btn-danger"
-              id="deleteProfileImage"
-              style="margin-top:10px;"
-            >
-              Hapus Foto
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <label>
-          Nama Profile
-        </label>
-
-        <input
-          type="text"
-          id="profileName"
-          placeholder="Toobey"
-        >
-
-
-        <label>
-          Subtitle
-        </label>
-
-        <input
-          type="text"
-          id="profileSubtitle"
-          placeholder="Gaming • Creator"
-        >
-
-
-        <label>
-          Bio / Deskripsi
-        </label>
-
-        <textarea
-          id="profileBio"
-          placeholder="Selamat datang di halaman Toobey!"
-        ></textarea>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         DESIGN TAB
-    ========================= -->
-
-    <section
-      class="tab"
-      id="tab-design"
-    >
-
-      <div class="card">
-
-        <h2 class="card-title">
-          🎨 Design
-        </h2>
-
-        <p class="card-description">
-          Pilih tampilan dasar halaman public.
-        </p>
-
-
-        <div class="design-grid">
-
-          <div
-            class="design-option"
-            data-design="aurora"
-          >
-
-            <div class="design-preview aurora-preview">
-              <div class="preview-avatar"></div>
-              <div class="preview-line"></div>
-              <div class="preview-card"></div>
-              <div class="preview-card"></div>
-            </div>
-
-            <div class="design-name">
-              Aurora
-            </div>
-
-          </div>
-
-
-          <div
-            class="design-option"
-            data-design="midnight"
-          >
-
-            <div class="design-preview midnight-preview">
-              <div class="preview-avatar"></div>
-              <div class="preview-line"></div>
-              <div class="preview-card"></div>
-              <div class="preview-card"></div>
-            </div>
-
-            <div class="design-name">
-              Midnight
-            </div>
-
-          </div>
-
-
-          <div
-            class="design-option"
-            data-design="ocean"
-          >
-
-            <div class="design-preview ocean-preview">
-              <div class="preview-avatar"></div>
-              <div class="preview-line"></div>
-              <div class="preview-card"></div>
-              <div class="preview-card"></div>
-            </div>
-
-            <div class="design-name">
-              Ocean
-            </div>
-
-          </div>
-
-
-          <div
-            class="design-option"
-            data-design="purple"
-          >
-
-            <div class="design-preview purple-preview">
-              <div class="preview-avatar"></div>
-              <div class="preview-line"></div>
-              <div class="preview-card"></div>
-              <div class="preview-card"></div>
-            </div>
-
-            <div class="design-name">
-              Purple
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2 class="card-title">
-          ⚙️ Detail Warna
-        </h2>
-
-        <p class="card-description">
-          Pengaturan warna dasar tema.
-        </p>
-
-
-        <label>
-          Warna Utama
-        </label>
-
-        <input
-          type="color"
-          id="primaryColor"
-          value="#3b82f6"
-        >
-
-
-        <label>
-          Warna Sekunder
-        </label>
-
-        <input
-          type="color"
-          id="secondaryColor"
-          value="#8b5cf6"
-        >
-
-
-        <label>
-          Gaya Kartu
-        </label>
-
-        <select id="cardStyle">
-          <option value="glass">
-            Glass
-          </option>
-        </select>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =========================
-       PREVIEW
-  ========================= -->
-
-  <aside class="preview-panel">
-
-    <div class="preview-title">
-
-      <strong>
-        Live Preview
-      </strong>
-
-      <span>
-        ● ONLINE
-      </span>
-
-    </div>
-
-    <div class="phone-wrap">
-
-      <div class="phone">
-
-        <iframe
-          id="previewFrame"
-          src="./?preview=1"
-          title="Preview halaman Toobey"
-        ></iframe>
-
-      </div>
-
-    </div>
-
-  </aside>
-
-</div>
-
-
-<!-- =========================
-     SAVE BAR
-========================= -->
-
-<div class="save-bar">
-
-  <div
-    class="status"
-    id="status"
-  >
-    Siap.
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-title">TOOBEY</div>
+    <div class="brand-sub">Admin Dashboard</div>
   </div>
 
-  <div class="save-actions">
+  <nav class="nav">
+    <button class="active" data-tab="content"><span>🔗</span> <span>Content</span></button>
+    <button data-tab="header"><span>👤</span> <span>Header</span></button>
+    <button data-tab="design"><span>🎨</span> <span>Design</span></button>
+  </nav>
 
-    <button
-      type="button"
-      class="btn btn-secondary"
-      id="logout"
-    >
-      Logout
-    </button>
-
-    <button
-      type="button"
-      class="btn btn-success"
-      id="saveAll"
-    >
-      💾 Simpan Semua
-    </button>
-
+  <div class="sidebar-bottom">
+    <a class="public-btn" href="./" target="_blank">🌐 Lihat Website</a>
+    <button class="logout-btn" id="logoutBtn">Keluar</button>
   </div>
-
-</div>
-
-
-<script>
-
-/* =========================================
-   SUPABASE
-========================================= */
-
-const SUPABASE_URL =
-  "https://arcnrdjnlxcauhiplgfr.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
-
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-let linksData = [];
-let profileData = null;
-let themeData = null;
-let selectedDesign = "aurora";
-
-
-/* =========================================
-   INIT
-========================================= */
-
-async function init() {
-
-  const {
-    data: {
-      session
-    }
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  if (!session) {
-
-    window.location.href =
-      "admin.html";
-
-    return;
-  }
-
-
-  await loadProfile();
-  await loadLinks();
-  await loadTheme();
-
-}
-
-
-/* =========================================
-   TABS
-========================================= */
-
-const pageInfo = {
-
-  content: {
-    title: "Content",
-    subtitle:
-      "Kelola link yang tampil di halaman Toobey."
-  },
-
-  header: {
-    title: "Header",
-    subtitle:
-      "Kelola profil dan informasi header."
-  },
-
-  design: {
-    title: "Design",
-    subtitle:
-      "Atur tampilan dan warna halaman."
-  }
-
-};
-
-
-function switchTab(tabName) {
-
-  document
-    .querySelectorAll(".tab")
-    .forEach(
-      tab => {
-
-        tab.classList.toggle(
-          "active",
-          tab.id ===
-          "tab-" + tabName
-        );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      ".nav-tab, .mobile-tab"
-    )
-    .forEach(
-      button => {
-
-        button.classList.toggle(
-          "active",
-          button.dataset.tab === tabName
-        );
-
-      }
-    );
-
-
-  document.getElementById(
-    "pageTitle"
-  ).textContent =
-    pageInfo[tabName].title;
-
-
-  document.getElementById(
-    "pageSubtitle"
-  ).textContent =
-    pageInfo[tabName].subtitle;
-
-}
-
-
-document
-  .querySelectorAll(
-    ".nav-tab, .mobile-tab"
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          switchTab(
-            button.dataset.tab
-          );
-
-        }
-      );
-
-    }
-  );
-
-
-/* =========================================
-   PROFILE
-========================================= */
-
-async function loadProfile() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .order(
-        "id",
-        {
-          ascending: false
-        }
-      )
-      .limit(1)
-      .maybeSingle();
-
-
-  if (error) {
-
-    console.error(error);
-
-    setStatus(
-      "Gagal memuat profil."
-    );
-
-    return;
-  }
-
-
-  profileData = data;
-
-
-  if (!data) {
-    return;
-  }
-
-
-  document.getElementById(
-    "profileName"
-  ).value =
-    data.name || "";
-
-
-  document.getElementById(
-    "profileSubtitle"
-  ).value =
-    data.subtitle || "";
-
-
-  document.getElementById(
-    "profileBio"
-  ).value =
-    data.bio || "";
-
-
-  document.getElementById(
-    "profilePreview"
-  ).src =
-    data.avatar_url ||
-    "profile.png";
-
-}
-
-
-/* =========================================
-   PROFILE IMAGE
-========================================= */
-
-document
-  .getElementById("profileImage")
-  .addEventListener(
-    "change",
-    async function () {
-
-      const file =
-        this.files[0];
-
-      if (!file) {
-        return;
-      }
-
-
-      if (!file.type.startsWith("image/")) {
-
-        setStatus(
-          "File harus berupa gambar."
-        );
-
-        return;
-      }
-
-
-      if (file.size > 5 * 1024 * 1024) {
-
-        setStatus(
-          "Ukuran gambar maksimal 5 MB."
-        );
-
-        return;
-      }
-
-
-      setStatus(
-        "Mengupload foto profil..."
-      );
-
-
-      const extension =
-        file.name
-          .split(".")
-          .pop()
-          .toLowerCase();
-
-
-      const fileName =
-        "profile/profile-" +
-        Date.now() +
-        "." +
-        extension;
-
-
-      const {
-        error: uploadError
-      } =
-        await supabaseClient
-          .storage
-          .from("link-thumbnails")
-          .upload(
-            fileName,
-            file,
-            {
-              upsert: true
-            }
-          );
-
-
-      if (uploadError) {
-
-        console.error(
-          uploadError
-        );
-
-        setStatus(
-          "Upload foto gagal: " +
-          uploadError.message
-        );
-
-        return;
-      }
-
-
-      const {
-        data
-      } =
-        supabaseClient
-          .storage
-          .from("link-thumbnails")
-          .getPublicUrl(
-            fileName
-          );
-
-
-      document.getElementById(
-        "profilePreview"
-      ).src =
-        data.publicUrl;
-
-
-      if (profileData) {
-
-        profileData.avatar_url =
-          data.publicUrl;
-
-      }
-
-
-      setStatus(
-        "Foto profil siap disimpan."
-      );
-
-    }
-  );
-
-
-/* =========================================
-   DELETE PROFILE IMAGE
-========================================= */
-
-document
-  .getElementById(
-    "deleteProfileImage"
-  )
-  .addEventListener(
-    "click",
-    function () {
-
-      if (!profileData) {
-        return;
-      }
-
-
-      profileData.avatar_url =
-        null;
-
-
-      document.getElementById(
-        "profilePreview"
-      ).src =
-        "profile.png";
-
-
-      setStatus(
-        "Foto profil akan dihapus saat disimpan."
-      );
-
-    }
-  );
-
-
-/* =========================================
-   LINKS
-========================================= */
-
-async function loadLinks() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("links")
-      .select("*")
-      .order(
-        "sort_order",
-        {
-          ascending: true
-        }
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    document.getElementById(
-      "linksContainer"
-    ).innerHTML =
-      "<div class='empty'>Gagal memuat link.</div>";
-
-    return;
-  }
-
-
-  linksData =
-    data || [];
-
-
-  renderLinks();
-
-}
-
-
-/* =========================================
-   RENDER LINKS
-========================================= */
-
-function renderLinks() {
-
-  const container =
-    document.getElementById(
-      "linksContainer"
-    );
-
-
-  if (!linksData.length) {
-
-    container.innerHTML =
-      `
-      <div class="empty">
-        <div style="font-size:35px;margin-bottom:10px;">
-          🔗
-        </div>
-
-        Belum ada link.
-        <br><br>
-
-        <button
-          type="button"
-          class="btn btn-primary"
-          onclick="document.getElementById('addLink').click()"
-        >
-          ＋ Tambah Link
-        </button>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div>
+      <div class="top-title" id="topTitle">Content</div>
+      <div class="top-sub">Kelola halaman Toobey tanpa mengedit kode.</div>
+    </div>
+    <div id="authState" class="status">Memuat...</div>
+  </header>
+
+  <div class="content-wrap">
+
+    <section class="tab active" id="tab-content">
+      <div class="section-head">
+        <h2>Content</h2>
+        <p>Atur link yang tampil di halaman utama.</p>
       </div>
-      `;
 
-    return;
-  }
+      <div class="card">
+        <div id="linksList" class="links-list"></div>
+        <button class="btn btn-primary" id="addLinkBtn">＋ Tambah Link</button>
+      </div>
+    </section>
 
+    <section class="tab" id="tab-header">
+      <div class="section-head">
+        <h2>Header</h2>
+        <p>Atur foto profil, nama, subtitle, dan bio.</p>
+      </div>
 
-  container.innerHTML = "";
+      <div class="card">
+        <div class="profile-layout">
+          <div class="avatar-box">
+            <div id="avatarContainer">
+              <div class="avatar-placeholder">👤</div>
+            </div>
 
-
-  linksData.forEach(
-    (link, index) => {
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-
-      item.className =
-        "link-item";
-
-
-      const iconHTML =
-        link.icon_url
-
-          ?
-
-        `
-        <img
-          src="${escapeHtml(link.icon_url)}"
-          alt="Icon"
-        >
-        `
-
-          :
-
-        `
-        ${escapeHtml(
-          link.icon || "🔗"
-        )}
-        `;
-
-
-      item.innerHTML = `
-
-        <div class="link-head">
-
-          <div class="link-head-left">
-
-            <span class="drag">
-              ⋮⋮
-            </span>
-
-            <span class="link-number">
-              Link ${index + 1}
-            </span>
-
-            <span
-              class="link-status ${
-                link.is_active
-                  ? ""
-                  : "off"
-              }"
-            >
-              ${
-                link.is_active
-                  ? "Aktif"
-                  : "Disembunyikan"
-              }
-            </span>
-
-          </div>
-
-          <button
-            type="button"
-            class="btn btn-danger"
-            onclick="deleteLink(${index})"
-          >
-            Hapus
-          </button>
-
-        </div>
-
-
-        <div class="icon-row">
-
-          <div class="icon-box">
-            ${iconHTML}
+            <div class="upload-row">
+              <label class="file-label" for="profileFile">📷 Upload</label>
+              <input type="file" id="profileFile" accept="image/*">
+              <button class="btn btn-danger btn-small" id="deleteProfileBtn">Hapus</button>
+            </div>
+            <div class="help">Maks. 5 MB</div>
           </div>
 
           <div>
-
-            <label class="upload-label">
-
-              🖼️ Upload Icon
-
-              <input
-                type="file"
-                accept="image/*"
-                onchange="uploadLinkIcon(${index}, this)"
-              >
-
-            </label>
-
-            <div
-              style="
-                color:#64748b;
-                font-size:11px;
-                margin-top:7px;
-              "
-            >
-              Gunakan gambar kecil sebagai icon.
+            <div class="field">
+              <label for="profileName">Nama</label>
+              <input id="profileName" type="text" placeholder="Toobey">
             </div>
 
+            <div class="field">
+              <label for="profileSubtitle">Subtitle</label>
+              <input id="profileSubtitle" type="text" placeholder="Gaming • Creator">
+            </div>
+
+            <div class="field">
+              <label for="profileBio">Bio / Deskripsi</label>
+              <textarea id="profileBio" placeholder="Selamat datang di halaman Toobey!"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-design">
+      <div class="section-head">
+        <h2>Design</h2>
+        <p>Pilih tampilan visual dan warna halaman.</p>
+      </div>
+
+      <div class="card">
+        <label>Pilih tema</label>
+
+        <div class="design-grid">
+          <div class="design-option" data-design="aurora">
+            <div class="mini-phone aurora">
+              <div class="mini-profile"></div>
+              <div class="mini-name"></div>
+              <div class="mini-bio"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+            </div>
+            <div class="design-name">Aurora</div>
+            <p class="design-desc">Navy + aurora</p>
           </div>
 
+          <div class="design-option" data-design="midnight">
+            <div class="mini-phone midnight">
+              <div class="mini-profile"></div>
+              <div class="mini-name"></div>
+              <div class="mini-bio"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+            </div>
+            <div class="design-name">Midnight</div>
+            <p class="design-desc">Dark minimal</p>
+          </div>
+
+          <div class="design-option" data-design="ocean">
+            <div class="mini-phone ocean">
+              <div class="mini-profile"></div>
+              <div class="mini-name"></div>
+              <div class="mini-bio"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+            </div>
+            <div class="design-name">Ocean</div>
+            <p class="design-desc">Blue cyan</p>
+          </div>
+
+          <div class="design-option" data-design="purple">
+            <div class="mini-phone purple">
+              <div class="mini-profile"></div>
+              <div class="mini-name"></div>
+              <div class="mini-bio"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+              <div class="mini-link"></div>
+            </div>
+            <div class="design-name">Purple</div>
+            <p class="design-desc">Purple gradient</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Warna</label>
+
+        <div class="color-row">
+          <div class="field">
+            <label>Primary Color</label>
+            <div class="color-control">
+              <input type="color" id="primaryColor" value="#3b82f6">
+              <input type="text" id="primaryColorText" value="#3b82f6">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Secondary Color</label>
+            <div class="color-control">
+              <input type="color" id="secondaryColor" value="#8b5cf6">
+              <input type="text" id="secondaryColorText" value="#8b5cf6">
+            </div>
+          </div>
         </div>
 
-
-        <label>
-          Label
-        </label>
-
-        <input
-          type="text"
-          value="${escapeAttribute(
-            link.title || ""
-          )}"
-          oninput="
-            linksData[${index}].title=this.value;
-          "
-        >
-
-
-        <label>
-          Deskripsi
-        </label>
-
-        <input
-          type="text"
-          value="${escapeAttribute(
-            link.description || ""
-          )}"
-          oninput="
-            linksData[${index}].description=this.value;
-          "
-        >
-
-
-        <label>
-          URL
-        </label>
-
-        <input
-          type="url"
-          value="${escapeAttribute(
-            link.url || ""
-          )}"
-          placeholder="https://..."
-          oninput="
-            linksData[${index}].url=this.value;
-          "
-        >
-
-
-        <label>
-          Emoji fallback
-        </label>
-
-        <input
-          type="text"
-          value="${escapeAttribute(
-            link.icon || "🔗"
-          )}"
-          oninput="
-            linksData[${index}].icon=this.value;
-          "
-        >
-
-
-        <label>
-          Urutan
-        </label>
-
-        <input
-          type="number"
-          value="${
-            link.sort_order ??
-            index + 1
-          }"
-          oninput="
-            linksData[${index}].sort_order=Number(this.value);
-          "
-        >
-
-
-        <div
-          style="
-            display:flex;
-            align-items:center;
-            gap:9px;
-            margin-top:3px;
-          "
-        >
-
-          <input
-            type="checkbox"
-            style="
-              width:auto;
-              margin:0;
-            "
-            ${
-              link.is_active
-                ? "checked"
-                : ""
-            }
-            onchange="
-              linksData[${index}].is_active=this.checked;
-              renderLinks();
-            "
-          >
-
-          <span
-            style="
-              color:#cbd5e1;
-              font-size:13px;
-            "
-          >
-            Tampilkan link ini
-          </span>
-
+        <div class="field">
+          <label>Style Kartu</label>
+          <select id="cardStyle">
+            <option value="glass">Glass</option>
+          </select>
         </div>
 
-      `;
+        <div class="field">
+          <label class="check-row">
+            <input type="checkbox" id="darkMode">
+            Gunakan dark mode
+          </label>
+        </div>
+      </div>
 
+      <div class="card preview-layout">
+        <div>
+          <h3 style="margin-top:0">Preview</h3>
+          <p class="help">Preview mengambil tampilan website publik terbaru.</p>
+        </div>
+        <div class="preview-phone">
+          <iframe id="previewFrame" title="Preview Website"></iframe>
+        </div>
+      </div>
+    </section>
 
-      container.appendChild(
-        item
-      );
+    <div class="savebar">
+      <div id="saveStatus" class="status">Perubahan belum disimpan.</div>
+      <button class="btn btn-primary" id="saveAllBtn">💾 Simpan Semua</button>
+    </div>
 
-    }
-  );
+  </div>
+</main>
+</div>
 
+<script>
+const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let profileRecord = null;
+let themeRecord = null;
+let links = [];
+let selectedDesign = "aurora";
+let profileAvatarUrl = null;
+
+const $ = id => document.getElementById(id);
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
+function setStatus(message, type=""){
+  $("saveStatus").textContent = message;
+  $("saveStatus").className = "status " + type;
+}
 
-/* =========================================
-   UPLOAD LINK ICON
-========================================= */
+function setAuthStatus(message){
+  $("authState").textContent = message;
+}
 
-async function uploadLinkIcon(
-  index,
-  input
-) {
+function validImage(file){
+  if(!file) return false;
+  if(!file.type.startsWith("image/")){
+    alert("File harus berupa gambar.");
+    return false;
+  }
+  if(file.size > 5 * 1024 * 1024){
+    alert("Ukuran gambar maksimal 5 MB.");
+    return false;
+  }
+  return true;
+}
 
-  const file =
-    input.files[0];
+function showTab(name){
+  document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(el => el.classList.remove("active"));
 
+  $("tab-" + name).classList.add("active");
+  document.querySelector(`.nav button[data-tab="${name}"]`).classList.add("active");
 
-  if (!file) {
-    return;
+  const titles = {
+    content:"Content",
+    header:"Header",
+    design:"Design"
+  };
+
+  $("topTitle").textContent = titles[name] || name;
+  refreshPreview();
+}
+
+document.querySelectorAll(".nav button").forEach(button => {
+  button.addEventListener("click", () => showTab(button.dataset.tab));
+});
+
+async function checkAuth(){
+  const {data, error} = await supabaseClient.auth.getSession();
+
+  if(error || !data.session){
+    window.location.href = "admin.html";
+    return false;
   }
 
+  currentUser = data.session.user;
+  setAuthStatus("● Login");
+  return true;
+}
 
-  if (!file.type.startsWith("image/")) {
+async function loadProfile(){
+  const {data, error} = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .order("id", {ascending:false})
+    .limit(1)
+    .maybeSingle();
 
-    setStatus(
-      "File icon harus berupa gambar."
-    );
-
-    return;
-  }
-
-
-  if (file.size > 5 * 1024 * 1024) {
-
-    setStatus(
-      "Ukuran icon maksimal 5 MB."
-    );
-
-    return;
-  }
-
-
-  setStatus(
-    "Mengupload icon..."
-  );
-
-
-  const extension =
-    file.name
-      .split(".")
-      .pop()
-      .toLowerCase();
-
-
-  const fileName =
-    "icons/icon-" +
-    Date.now() +
-    "-" +
-    index +
-    "." +
-    extension;
-
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .storage
-      .from("link-thumbnails")
-      .upload(
-        fileName,
-        file,
-        {
-          upsert: true
-        }
-      );
-
-
-  if (error) {
-
+  if(error){
     console.error(error);
-
-    setStatus(
-      "Upload icon gagal: " +
-      error.message
-    );
-
+    setStatus("Gagal memuat profile.", "error");
     return;
   }
 
+  profileRecord = data;
 
-  const {
-    data
-  } =
-    supabaseClient
-      .storage
-      .from("link-thumbnails")
-      .getPublicUrl(
-        fileName
-      );
+  if(data){
+    $("profileName").value = data.name || "";
+    $("profileSubtitle").value = data.subtitle || "";
+    $("profileBio").value = data.bio || "";
+    profileAvatarUrl = data.avatar_url || null;
+  }else{
+    $("profileName").value = "Toobey";
+    $("profileSubtitle").value = "Gaming • Creator";
+    $("profileBio").value = "Selamat datang di halaman Toobey!";
+    profileAvatarUrl = null;
+  }
 
+  renderAvatar();
+}
 
-  linksData[index].icon_url =
-    data.publicUrl;
+async function loadLinks(){
+  const {data, error} = await supabaseClient
+    .from("links")
+    .select("*")
+    .order("sort_order", {ascending:true})
+    .order("id", {ascending:true});
 
+  if(error){
+    console.error(error);
+    setStatus("Gagal memuat links.", "error");
+    return;
+  }
+
+  links = data || [];
+  renderLinks();
+}
+
+async function loadTheme(){
+  const {data, error} = await supabaseClient
+    .from("themes")
+    .select("*")
+    .order("id", {ascending:false})
+    .limit(1)
+    .maybeSingle();
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  themeRecord = data;
+
+  if(data){
+    $("primaryColor").value = data.primary_color || "#3b82f6";
+    $("primaryColorText").value = data.primary_color || "#3b82f6";
+    $("secondaryColor").value = data.secondary_color || "#8b5cf6";
+    $("secondaryColorText").value = data.secondary_color || "#8b5cf6";
+    $("cardStyle").value = data.card_style || "glass";
+    $("darkMode").checked = !!data.dark_mode;
+
+    const bg = data.background_type || "aurora";
+    if(["aurora","midnight","ocean","purple"].includes(bg)){
+      selectedDesign = bg;
+    }
+  }
+
+  updateDesignSelection();
+}
+
+function renderAvatar(){
+  const container = $("avatarContainer");
+
+  if(profileAvatarUrl){
+    container.innerHTML = `<img class="avatar" src="${escapeHtml(profileAvatarUrl)}" alt="Foto profil">`;
+  }else{
+    container.innerHTML = `<div class="avatar-placeholder">👤</div>`;
+  }
+}
+
+function renderLinks(){
+  const list = $("linksList");
+
+  if(!links.length){
+    list.innerHTML = `<div class="empty">Belum ada link. Klik "Tambah Link" untuk membuat link pertama.</div>`;
+    return;
+  }
+
+  list.innerHTML = links.map((link,index) => {
+    const iconHtml = link.icon_url
+      ? `<img class="link-icon" src="${escapeHtml(link.icon_url)}" alt="">`
+      : `<div class="link-icon">${escapeHtml(link.icon || "🔗")}</div>`;
+
+    return `
+      <div class="link-card" data-id="${link.id ?? ""}">
+        <div class="link-head">
+          ${iconHtml}
+
+          <div class="link-title-wrap">
+            <div class="link-number">LINK ${index + 1}</div>
+            <div class="link-title-preview">${escapeHtml(link.title || "Link baru")}</div>
+          </div>
+
+          <div class="link-actions">
+            <button class="btn btn-secondary btn-small" onclick="moveLink(${index},-1)" ${index===0?"disabled":""}>↑</button>
+            <button class="btn btn-secondary btn-small" onclick="moveLink(${index},1)" ${index===links.length-1?"disabled":""}>↓</button>
+            <button class="btn btn-danger btn-small" onclick="removeLink(${index})">Hapus</button>
+          </div>
+        </div>
+
+        <div class="link-grid">
+          <div class="field">
+            <label>Label</label>
+            <input type="text" value="${escapeHtml(link.title || "")}"
+              oninput="updateLink(${index},'title',this.value)"
+              placeholder="Contoh: TikTok">
+          </div>
+
+          <div class="field">
+            <label>URL</label>
+            <input type="url" value="${escapeHtml(link.url || "")}"
+              oninput="updateLink(${index},'url',this.value)"
+              placeholder="https://...">
+          </div>
+
+          <div class="field full">
+            <label>Deskripsi</label>
+            <input type="text" value="${escapeHtml(link.description || "")}"
+              oninput="updateLink(${index},'description',this.value)"
+              placeholder="Deskripsi singkat">
+          </div>
+
+          <div class="field">
+            <label>Icon / Emoji fallback</label>
+            <input type="text" value="${escapeHtml(link.icon || "🔗")}"
+              oninput="updateLink(${index},'icon',this.value)"
+              placeholder="🔗">
+          </div>
+
+          <div class="field">
+            <label>Icon Gambar</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <label class="file-label">
+                📷 Upload Icon
+                <input type="file" accept="image/*" onchange="uploadLinkIcon(${index},this.files[0])">
+              </label>
+              <button class="btn btn-danger btn-small" onclick="deleteLinkIcon(${index})">Hapus Icon</button>
+            </div>
+            <div class="help">Icon gambar akan diprioritaskan daripada emoji.</div>
+          </div>
+
+          <div class="field">
+            <label>Urutan</label>
+            <input type="number" value="${Number(link.sort_order ?? index)}"
+              oninput="updateLink(${index},'sort_order',Number(this.value))">
+          </div>
+
+          <div class="field">
+            <label class="check-row">
+              <input type="checkbox" ${link.is_active !== false ? "checked":""}
+                onchange="updateLink(${index},'is_active',this.checked)">
+              Tampilkan link ini
+            </label>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.updateLink = function(index,key,value){
+  if(!links[index]) return;
+  links[index][key] = value;
+
+  if(key === "title"){
+    const card = document.querySelectorAll(".link-card")[index];
+    if(card){
+      const title = card.querySelector(".link-title-preview");
+      if(title) title.textContent = value || "Link baru";
+    }
+  }
+
+  setStatus("Ada perubahan yang belum disimpan.");
+};
+
+window.moveLink = function(index,direction){
+  const target = index + direction;
+  if(target < 0 || target >= links.length) return;
+
+  [links[index],links[target]] = [links[target],links[index]];
+
+  links.forEach((link,i) => link.sort_order = i);
+  renderLinks();
+  setStatus("Urutan link berubah. Klik Simpan Semua.");
+};
+
+window.removeLink = function(index){
+  if(!links[index]) return;
+
+  const link = links[index];
+
+  if(!confirm(`Hapus link "${link.title || "ini"}"?`)) return;
+
+  if(link.id){
+    link._deleted = true;
+  }else{
+    links.splice(index,1);
+  }
 
   renderLinks();
+  setStatus("Ada perubahan yang belum disimpan.");
+};
 
+$("addLinkBtn").addEventListener("click", async () => {
+  const newLink = {
+    title:"Link Baru",
+    description:"",
+    url:"https://",
+    icon:"🔗",
+    icon_url:null,
+    media_type:"icon",
+    thumbnail_url:null,
+    sort_order:links.length,
+    is_active:true
+  };
 
-  setStatus(
-    "Icon siap disimpan."
-  );
+  const {data,error} = await supabaseClient
+    .from("links")
+    .insert(newLink)
+    .select()
+    .single();
 
-}
-
-
-/* =========================================
-   ADD LINK
-========================================= */
-
-document
-  .getElementById("addLink")
-  .addEventListener(
-    "click",
-    function () {
-
-      linksData.push({
-
-        title:
-          "Link Baru",
-
-        description:
-          "",
-
-        url:
-          "#",
-
-        icon:
-          "🔗",
-
-        icon_url:
-          null,
-
-        sort_order:
-          linksData.length + 1,
-
-        is_active:
-          true
-
-      });
-
-
-      renderLinks();
-
-
-      setStatus(
-        "Link baru ditambahkan. Jangan lupa Simpan Semua."
-      );
-
-    }
-  );
-
-
-/* =========================================
-   DELETE LINK
-========================================= */
-
-function deleteLink(index) {
-
-  const link =
-    linksData[index];
-
-
-  if (
-    !confirm(
-      `Hapus link "${link.title || "Link ini"}"?`
-    )
-  ) {
-
-    return;
-
-  }
-
-
-  linksData.splice(
-    index,
-    1
-  );
-
-
-  linksData.forEach(
-    (item, i) => {
-
-      item.sort_order =
-        i + 1;
-
-    }
-  );
-
-
-  renderLinks();
-
-
-  setStatus(
-    "Link dihapus dari editor. Simpan untuk menerapkan."
-  );
-
-}
-
-
-/* =========================================
-   THEME
-========================================= */
-
-async function loadTheme() {
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("themes")
-      .select("*")
-      .order(
-        "id",
-        {
-          ascending: false
-        }
-      )
-      .limit(1)
-      .maybeSingle();
-
-
-  if (error) {
-
+  if(error){
     console.error(error);
-
+    alert("Gagal membuat link baru: " + error.message);
     return;
   }
 
+  links.push(data);
+  renderLinks();
+  setStatus("Link baru ditambahkan.");
+});
 
-  themeData =
-    data;
+window.uploadLinkIcon = async function(index,file){
+  if(!validImage(file)) return;
+  const link = links[index];
 
+  if(!link) return;
 
-  if (!data) {
+  setStatus("Mengupload icon...");
+
+  const extension = file.name.split(".").pop().toLowerCase() || "png";
+  const path = `icons/${link.id || Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+  const {error:uploadError} = await supabaseClient
+    .storage
+    .from("link-thumbnails")
+    .upload(path,file,{upsert:true,contentType:file.type});
+
+  if(uploadError){
+    console.error(uploadError);
+    alert("Upload icon gagal: " + uploadError.message);
+    setStatus("Upload icon gagal.", "error");
     return;
   }
 
+  const {data} = supabaseClient
+    .storage
+    .from("link-thumbnails")
+    .getPublicUrl(path);
 
-  selectedDesign =
-    data.background_type ||
-    "aurora";
+  link.icon_url = data.publicUrl;
+  link.media_type = "icon";
+  renderLinks();
+  setStatus("Icon berhasil diupload. Klik Simpan Semua.");
+};
 
+window.deleteLinkIcon = function(index){
+  if(!links[index]) return;
+  links[index].icon_url = null;
+  setStatus("Icon akan dihapus setelah Simpan Semua.");
+  renderLinks();
+};
 
-  selectDesign(
-    selectedDesign
-  );
+$("profileFile").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if(!validImage(file)) return;
 
+  setStatus("Mengupload foto profil...");
 
-  document.getElementById(
-    "primaryColor"
-  ).value =
-    data.primary_color ||
-    "#3b82f6";
+  const extension = file.name.split(".").pop().toLowerCase() || "png";
+  const path = `profile/${currentUser.id}-${Date.now()}.${extension}`;
 
+  const {error} = await supabaseClient
+    .storage
+    .from("link-thumbnails")
+    .upload(path,file,{upsert:true,contentType:file.type});
 
-  document.getElementById(
-    "secondaryColor"
-  ).value =
-    data.secondary_color ||
-    "#8b5cf6";
+  if(error){
+    console.error(error);
+    alert("Upload foto profil gagal: " + error.message);
+    setStatus("Upload foto profil gagal.", "error");
+    return;
+  }
 
+  const {data} = supabaseClient
+    .storage
+    .from("link-thumbnails")
+    .getPublicUrl(path);
 
-  document.getElementById(
-    "cardStyle"
-  ).value =
-    data.card_style ||
-    "glass";
+  profileAvatarUrl = data.publicUrl;
+  renderAvatar();
+  setStatus("Foto profil berhasil diupload. Klik Simpan Semua.");
+});
 
+$("deleteProfileBtn").addEventListener("click", () => {
+  profileAvatarUrl = null;
+  renderAvatar();
+  setStatus("Foto profil akan dihapus setelah Simpan Semua.");
+});
+
+function updateColorText(source,target){
+  $(source).addEventListener("input",()=>{
+    $(target).value = $(source).value;
+    setStatus("Ada perubahan yang belum disimpan.");
+  });
 }
 
-
-/* =========================================
-   DESIGN SELECT
-========================================= */
-
-function selectDesign(
-  design
-) {
-
-  selectedDesign =
-    design;
-
-
-  document
-    .querySelectorAll(
-      ".design-option"
-    )
-    .forEach(
-      option => {
-
-        option.classList.toggle(
-          "selected",
-          option.dataset.design ===
-          design
-        );
-
-      }
-    );
-
-}
-
-
-document
-  .querySelectorAll(
-    ".design-option"
-  )
-  .forEach(
-    option => {
-
-      option.addEventListener(
-        "click",
-        function () {
-
-          selectDesign(
-            this.dataset.design
-          );
-
-
-          setStatus(
-            "Tema " +
-            this.dataset.design +
-            " dipilih. Simpan untuk menerapkan."
-          );
-
-        }
-      );
-
+function updateColorPicker(source,target){
+  $(source).addEventListener("input",()=>{
+    const value = $(source).value;
+    if(/^#[0-9a-fA-F]{6}$/.test(value)){
+      $(target).value = value;
+      setStatus("Ada perubahan yang belum disimpan.");
     }
-  );
+  });
+}
 
+updateColorText("primaryColor","primaryColorText");
+updateColorText("secondaryColor","secondaryColorText");
+updateColorPicker("primaryColorText","primaryColor");
+updateColorPicker("secondaryColorText","secondaryColor");
 
-/* =========================================
-   SAVE ALL
-========================================= */
+["cardStyle","darkMode"].forEach(id => {
+  $(id).addEventListener("change",()=>{
+    setStatus("Ada perubahan yang belum disimpan.");
+    refreshPreview();
+  });
+});
 
-document
-  .getElementById("saveAll")
-  .addEventListener(
-    "click",
-    saveAll
-  );
+document.querySelectorAll(".design-option").forEach(option => {
+  option.addEventListener("click",()=>{
+    selectedDesign = option.dataset.design;
+    updateDesignSelection();
+    setStatus("Tema dipilih. Klik Simpan Semua.");
+    refreshPreview();
+  });
+});
 
+function updateDesignSelection(){
+  document.querySelectorAll(".design-option").forEach(option=>{
+    option.classList.toggle("selected",option.dataset.design === selectedDesign);
+  });
+}
 
-async function saveAll() {
+function refreshPreview(){
+  const frame = $("previewFrame");
+  if(!frame) return;
+  frame.src = "./?preview=1&t=" + Date.now();
+}
 
-  setStatus(
-    "Menyimpan..."
-  );
+$("saveAllBtn").addEventListener("click", saveAll);
 
+async function saveAll(){
+  $("saveAllBtn").disabled = true;
+  setStatus("Menyimpan...");
 
-  try {
+  try{
+    const name = $("profileName").value.trim();
+    const subtitle = $("profileSubtitle").value.trim();
+    const bio = $("profileBio").value.trim();
 
-    /* =========================
-       PROFILE
-    ========================= */
+    if(!name){
+      throw new Error("Nama profile wajib diisi.");
+    }
 
-    if (profileData?.id) {
+    if(profileRecord?.id){
+      const {error} = await supabaseClient
+        .from("profiles")
+        .update({
+          name,
+          subtitle,
+          bio,
+          avatar_url:profileAvatarUrl,
+          updated_at:new Date().toISOString()
+        })
+        .eq("id",profileRecord.id);
 
-      const profileUpdate = {
+      if(error) throw error;
+    }else{
+      const {data,error} = await supabaseClient
+        .from("profiles")
+        .insert({
+          name,
+          subtitle,
+          bio,
+          avatar_url:profileAvatarUrl,
+          updated_at:new Date().toISOString()
+        })
+        .select()
+        .single();
 
-        name:
-          document.getElementById(
-            "profileName"
-          ).value.trim(),
+      if(error) throw error;
+      profileRecord = data;
+    }
 
-        subtitle:
-          document.getElementById(
-            "profileSubtitle"
-          ).value.trim(),
+    const deletedLinks = links.filter(link=>link._deleted && link.id);
 
-        bio:
-          document.getElementById(
-            "profileBio"
-          ).value.trim(),
+    for(const link of deletedLinks){
+      const {error} = await supabaseClient
+        .from("links")
+        .delete()
+        .eq("id",link.id);
 
-        avatar_url:
-          profileData.avatar_url,
+      if(error) throw error;
+    }
 
-        updated_at:
-          new Date().toISOString()
+    const activeLinks = links.filter(link=>!link._deleted);
 
+    for(let i=0;i<activeLinks.length;i++){
+      const link = activeLinks[i];
+
+      const payload = {
+        title:(link.title || "Link Baru").trim(),
+        description:link.description || "",
+        url:(link.url || "#").trim(),
+        icon:link.icon || "🔗",
+        icon_url:link.icon_url || null,
+        media_type:link.media_type || "icon",
+        thumbnail_url:link.thumbnail_url || null,
+        sort_order:i,
+        is_active:link.is_active !== false,
+        updated_at:new Date().toISOString()
       };
 
+      if(link.id){
+        const {error} = await supabaseClient
+          .from("links")
+          .update(payload)
+          .eq("id",link.id);
 
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("profiles")
-          .update(
-            profileUpdate
-          )
-          .eq(
-            "id",
-            profileData.id
-          );
+        if(error) throw error;
+      }else{
+        const {data,error} = await supabaseClient
+          .from("links")
+          .insert(payload)
+          .select()
+          .single();
 
-
-      if (error) {
-        throw error;
+        if(error) throw error;
+        link.id = data.id;
       }
-
     }
 
+    links = activeLinks;
 
-    /* =========================
-       LINKS
-    ========================= */
+    const primary = $("primaryColorText").value.trim();
+    const secondary = $("secondaryColorText").value.trim();
 
-    for (
-      const link of linksData
-    ) {
-
-      if (link.id) {
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("links")
-            .update({
-
-              title:
-                link.title,
-
-              description:
-                link.description,
-
-              url:
-                link.url,
-
-              icon:
-                link.icon,
-
-              icon_url:
-                link.icon_url,
-
-              sort_order:
-                link.sort_order,
-
-              is_active:
-                link.is_active,
-
-              updated_at:
-                new Date().toISOString()
-
-            })
-            .eq(
-              "id",
-              link.id
-            );
-
-
-        if (error) {
-          throw error;
-        }
-
-      } else {
-
-        const {
-          data: insertedLink,
-          error
-        } =
-          await supabaseClient
-            .from("links")
-            .insert({
-
-              title:
-                link.title,
-
-              description:
-                link.description,
-
-              url:
-                link.url,
-
-              icon:
-                link.icon,
-
-              icon_url:
-                link.icon_url,
-
-              sort_order:
-                link.sort_order,
-
-              is_active:
-                link.is_active
-
-            })
-            .select()
-            .single();
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        if (insertedLink) {
-
-          link.id =
-            insertedLink.id;
-
-        }
-
-      }
-
+    if(!/^#[0-9a-fA-F]{6}$/.test(primary)){
+      throw new Error("Primary Color tidak valid.");
     }
 
-
-    /* =========================
-       THEME
-    ========================= */
-
-    if (themeData?.id) {
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from("themes")
-          .update({
-
-            background_type:
-              selectedDesign,
-
-            primary_color:
-              document.getElementById(
-                "primaryColor"
-              ).value,
-
-            secondary_color:
-              document.getElementById(
-                "secondaryColor"
-              ).value,
-
-            card_style:
-              document.getElementById(
-                "cardStyle"
-              ).value,
-
-            updated_at:
-              new Date().toISOString()
-
-          })
-          .eq(
-            "id",
-            themeData.id
-          );
-
-
-      if (error) {
-        throw error;
-      }
-
+    if(!/^#[0-9a-fA-F]{6}$/.test(secondary)){
+      throw new Error("Secondary Color tidak valid.");
     }
 
+    const themePayload = {
+      background_type:selectedDesign,
+      primary_color:primary,
+      secondary_color:secondary,
+      card_style:$("cardStyle").value,
+      dark_mode:$("darkMode").checked,
+      updated_at:new Date().toISOString()
+    };
 
-    await loadProfile();
-    await loadLinks();
-    await loadTheme();
+    if(themeRecord?.id){
+      const {error} = await supabaseClient
+        .from("themes")
+        .update(themePayload)
+        .eq("id",themeRecord.id);
 
+      if(error) throw error;
+    }else{
+      const {data,error} = await supabaseClient
+        .from("themes")
+        .insert(themePayload)
+        .select()
+        .single();
 
+      if(error) throw error;
+      themeRecord = data;
+    }
+
+    setStatus("Semua perubahan berhasil disimpan.", "success");
+    renderLinks();
     refreshPreview();
 
-
-    setStatus(
-      "✅ Semua perubahan berhasil disimpan."
-    );
-
-
-  } catch (error) {
-
+  }catch(error){
     console.error(error);
-
-    setStatus(
-      "❌ Gagal menyimpan: " +
-      error.message
-    );
-
+    setStatus("Gagal menyimpan: " + error.message, "error");
+    alert("Gagal menyimpan perubahan:\n\n" + error.message);
+  }finally{
+    $("saveAllBtn").disabled = false;
   }
-
 }
 
+$("logoutBtn").addEventListener("click", async()=>{
+  await supabaseClient.auth.signOut();
+  window.location.href = "admin.html";
+});
 
-/* =========================================
-   PREVIEW
-========================================= */
+(async function init(){
+  const ok = await checkAuth();
+  if(!ok) return;
 
-function refreshPreview() {
+  await Promise.all([
+    loadProfile(),
+    loadLinks(),
+    loadTheme()
+  ]);
 
-  const frame =
-    document.getElementById(
-      "previewFrame"
-    );
-
-
-  frame.src =
-    "./?preview=1&t=" +
-    Date.now();
-
-}
-
-
-/* =========================================
-   LOGOUT
-========================================= */
-
-document
-  .getElementById("logout")
-  .addEventListener(
-    "click",
-    async function () {
-
-      await supabaseClient
-        .auth
-        .signOut();
-
-
-      window.location.href =
-        "admin.html";
-
-    }
-  );
-
-
-/* =========================================
-   STATUS
-========================================= */
-
-function setStatus(
-  text
-) {
-
-  document.getElementById(
-    "status"
-  ).textContent =
-    text;
-
-}
-
-
-/* =========================================
-   ESCAPE
-========================================= */
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value ?? ""
-  )
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
-
-}
-
-
-function escapeAttribute(
-  value
-) {
-
-  return escapeHtml(
-    value
-  );
-
-}
-
-
-/* =========================================
-   START
-========================================= */
-
-init();
-
+  updateDesignSelection();
+  refreshPreview();
+  setStatus("Dashboard siap.");
+})();
 </script>
-
 </body>
 </html>
-```
