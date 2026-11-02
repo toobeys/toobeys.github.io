@@ -884,6 +884,7 @@ function updateColorText(source,target){
   $(source).addEventListener("input",()=>{
     $(target).value = $(source).value;
     setStatus("Ada perubahan yang belum disimpan.");
+    refreshPreview();
   });
 }
 
@@ -893,6 +894,7 @@ function updateColorPicker(source,target){
     if(/^#[0-9a-fA-F]{6}$/.test(value)){
       $(target).value = value;
       setStatus("Ada perubahan yang belum disimpan.");
+      refreshPreview();
     }
   });
 }
@@ -914,6 +916,7 @@ document.querySelectorAll(".design-option").forEach(option => {
     selectedDesign = option.dataset.design;
     applyDesignPreset(selectedDesign, true);
     updateDesignSelection();
+    refreshPreview();
   });
 });
 
@@ -942,6 +945,52 @@ function updateDesignSelection(){
   });
 }
 
+function applyPreviewDesign(doc){
+  if(!doc || !doc.head) return;
+  const old = doc.getElementById("adminLiveDesignPreview");
+  if(old) old.remove();
+
+  const presets = {
+    aurora: {
+      bg1:"#050816", bg2:"#0b1224", primary:"#3b82f6", secondary:"#8b5cf6",
+      body:"radial-gradient(circle at 20% 10%, rgba(59,130,246,.22), transparent 35%), radial-gradient(circle at 85% 20%, rgba(139,92,246,.20), transparent 35%), linear-gradient(160deg,#050816,#0b1224)",
+      card:"rgba(15,23,42,.58)", border:"rgba(148,163,184,.16)", text:"#f8fafc", muted:"#94a3b8"
+    },
+    midnight: {
+      bg1:"#030712", bg2:"#0f172a", primary:"#64748b", secondary:"#334155",
+      body:"linear-gradient(160deg,#030712,#0f172a)",
+      card:"rgba(15,23,42,.72)", border:"rgba(148,163,184,.12)", text:"#f8fafc", muted:"#94a3b8"
+    },
+    ocean: {
+      bg1:"#03141c", bg2:"#082f49", primary:"#06b6d4", secondary:"#2563eb",
+      body:"radial-gradient(circle at 15% 10%, rgba(6,182,212,.22), transparent 35%), radial-gradient(circle at 85% 20%, rgba(37,99,235,.22), transparent 35%), linear-gradient(160deg,#03141c,#082f49)",
+      card:"rgba(8,47,73,.52)", border:"rgba(103,232,249,.16)", text:"#f0fdfa", muted:"#94a3b8"
+    },
+    purple: {
+      bg1:"#10051c", bg2:"#24103d", primary:"#a855f7", secondary:"#ec4899",
+      body:"radial-gradient(circle at 20% 10%, rgba(168,85,247,.25), transparent 35%), radial-gradient(circle at 85% 20%, rgba(236,72,153,.20), transparent 35%), linear-gradient(160deg,#10051c,#24103d)",
+      card:"rgba(36,16,61,.55)", border:"rgba(216,180,254,.16)", text:"#faf5ff", muted:"#c4b5fd"
+    }
+  };
+
+  const base = presets[selectedDesign] || presets.aurora;
+  const d = { ...base, primary: $("primaryColor")?.value || base.primary, secondary: $("secondaryColor")?.value || base.secondary };
+  const style = doc.createElement("style");
+  style.id = "adminLiveDesignPreview";
+  style.textContent = `
+    :root{--preview-primary:${d.primary}!important;--preview-secondary:${d.secondary}!important;}
+    body{background:${d.body}!important;color:${d.text}!important;}
+    .bg{background:${d.body}!important;}
+    .page{color:${d.text}!important;}
+    .links a,.link-card,.card,.link-item{background:${d.card}!important;border-color:${d.border}!important;}
+    .links a:hover,.link-card:hover,.link-item:hover{border-color:${d.primary}!important;box-shadow:0 12px 35px rgba(0,0,0,.18),0 0 0 1px ${d.primary}33!important;}
+    .subtitle,.welcome,.social-title,footer{color:${d.muted}!important;}
+    .theme-toggle{border-color:${d.border}!important;background:${d.card}!important;}
+    .divider b{color:${d.primary}!important;}
+  `;
+  doc.head.appendChild(style);
+}
+
 function refreshPreview(){
   const frame = $("previewFrame");
   if(!frame) return;
@@ -958,6 +1007,8 @@ function refreshPreview(){
       textNodes.forEach(node => {
         node.nodeValue = node.nodeValue.replace(/```html/gi, "").replace(/```/g, "");
       });
+
+      applyPreviewDesign(doc);
 
       const oldStyle = doc.getElementById("adminPreviewScrollbar");
       if(oldStyle) oldStyle.remove();
