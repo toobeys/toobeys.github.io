@@ -38,7 +38,7 @@ body:hover{scrollbar-color:rgba(148,163,184,.32) transparent}
   background:transparent;border-radius:20px;
   transition:background .45s ease,opacity .45s ease;
 }
-*:hover::-webkit-scrollbar-thumb{background:rgba(148,163,184,.30)}
+*:hover::-webkit-scrollbar-thumb{background:transparent}
 ::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.52)}
 
 body{
@@ -81,8 +81,8 @@ button{cursor:pointer}
   transition:.22s;min-height:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:5px
 }
-.nav button{aspect-ratio:1 / 1;height:auto;min-height:0;padding:8px;border-radius:12px}
-.nav button .tab-icon{font-size:20px;line-height:1}.nav button .tab-label{font-size:11px;line-height:1.1}
+.nav button{aspect-ratio:1 / 1;height:auto;min-height:0;padding:6px;border-radius:10px;width:58px;max-width:58px}
+.nav button .tab-icon{font-size:18px;line-height:1}.nav button .tab-label{font-size:10px;line-height:1.1}
 .nav button:hover{background:rgba(59,130,246,.08);color:#e2e8f0;border-color:rgba(96,165,250,.1)}
 .tab-icon{font-size:20px;line-height:1}
 .tab-label{font-size:11px;line-height:1}
@@ -232,7 +232,7 @@ input[type=file]{display:none}
   .sidebar{width:68px;padding:16px 8px}
   .brand{padding:4px 0 20px;text-align:center}.brand-title{font-size:16px}
   .brand-sub,.public-btn,.logout-btn{display:none}.nav button .tab-label{display:block}.nav button .tab-icon{display:block}
-  .nav button{font-size:20px;text-align:center;padding:8px 4px;border-radius:12px;height:64px;gap:4px}
+  .nav button{font-size:18px;text-align:center;padding:6px 3px;border-radius:10px;height:56px;width:56px;max-width:56px;gap:3px}
   .main{margin-left:68px;width:calc(100% - 68px)}
   .topbar{height:auto;min-height:70px;padding:12px 16px}.top-sub{display:none}
   .content-wrap{padding:16px}.grid2,.link-grid,.color-row,.profile-layout{grid-template-columns:1fr}
@@ -251,8 +251,9 @@ input[type=file]{display:none}
 .persistent-preview .preview-phone{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.22) transparent}
 .persistent-preview .preview-phone::-webkit-scrollbar{width:5px}
 .persistent-preview .preview-phone::-webkit-scrollbar-track{background:transparent}
-.persistent-preview .preview-phone::-webkit-scrollbar-thumb{background:rgba(148,163,184,.20);border-radius:999px}
-.persistent-preview .preview-phone::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.38)}
+.persistent-preview .preview-phone::-webkit-scrollbar-thumb{background:transparent;border-radius:999px;transition:background .2s ease}
+.persistent-preview .preview-phone.is-scrolling::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28)}
+.persistent-preview .preview-phone.is-scrolling::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.42)}
 .persistent-preview iframe{display:block}
 @media(max-width:1100px){.dashboard-workspace{grid-template-columns:minmax(0,1fr) 320px}.persistent-preview .preview-phone{height:600px;min-height:0}}
 @media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}.persistent-preview{order:2}.editor-column{order:1}}
@@ -938,14 +939,32 @@ function refreshPreview(){
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
-          background: rgba(148,163,184,.22);
+          background: transparent;
           border-radius: 999px;
+          transition: background .2s ease;
         }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(148,163,184,.40);
+        body.is-scrolling ::-webkit-scrollbar-thumb,
+        html.is-scrolling ::-webkit-scrollbar-thumb {
+          background: rgba(148,163,184,.28);
+        }
+        body.is-scrolling ::-webkit-scrollbar-thumb:hover,
+        html.is-scrolling ::-webkit-scrollbar-thumb:hover {
+          background: rgba(148,163,184,.42);
         }
       `;
       doc.head.appendChild(style);
+      let timer;
+      const markScrolling = () => {
+        doc.documentElement.classList.add("is-scrolling");
+        if(doc.body) doc.body.classList.add("is-scrolling");
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          doc.documentElement.classList.remove("is-scrolling");
+          if(doc.body) doc.body.classList.remove("is-scrolling");
+        }, 650);
+      };
+      doc.addEventListener("scroll", markScrolling, {passive:true});
+      if(doc.scrollingElement) doc.scrollingElement.addEventListener("scroll", markScrolling, {passive:true});
     }catch(e){ console.debug("Preview scrollbar styling skipped", e); }
   };
 
