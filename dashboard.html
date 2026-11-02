@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard Admin - Nendar</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(59,130,246,.22), transparent 35%),
+        radial-gradient(circle at 90% 90%, rgba(139,92,246,.22), transparent 35%),
+        #07111f;
+      color: #fff;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin-top: 5px;
+      opacity: .65;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .logout {
+      background: rgba(255,255,255,.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+
+    .card {
+      margin-bottom: 20px;
+      padding: 24px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(20px);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      font-size: 14px;
+      opacity: .8;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.2);
+      color: white;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .link-item {
+      padding: 18px;
+      margin-top: 15px;
+      border-radius: 15px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .save {
+      width: 100%;
+      margin-top: 10px;
+      padding: 15px;
+      color: white;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      font-size: 16px;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      min-height: 20px;
+    }
+
+    .loading {
+      opacity: .6;
+      text-align: center;
+      padding: 30px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header>
+
+    <div>
+      <h1>Admin Dashboard</h1>
+      <div class="subtitle">
+        Kelola Link-in-Bio Nendar
+      </div>
+    </div>
+
+    <button class="logout" id="logoutButton">
+      Logout
+    </button>
+
+  </header>
+
+
+  <!-- PROFIL -->
+
+  <div class="card">
+
+    <h2>👤 Profil</h2>
+
+    <label>Nama</label>
+    <input id="profileName" type="text">
+
+    <label>Subtitle</label>
+    <input id="profileSubtitle" type="text">
+
+    <label>Bio</label>
+    <textarea id="profileBio"></textarea>
+
+  </div>
+
+
+  <!-- LINK -->
+
+  <div class="card">
+
+    <h2>🔗 Link</h2>
+
+    <div id="linksContainer">
+      <div class="loading">
+        Memuat link...
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- TEMA -->
+
+  <div class="card">
+
+    <h2>🎨 Tema</h2>
+
+    <label>Background</label>
+
+    <select id="backgroundType">
+      <option value="aurora">Aurora</option>
+      <option value="plain">Plain</option>
+    </select>
+
+    <label>Warna Utama</label>
+    <input id="primaryColor" type="text">
+
+    <label>Warna Sekunder</label>
+    <input id="secondaryColor" type="text">
+
+    <label>Style Card</label>
+
+    <select id="cardStyle">
+      <option value="glass">Glass</option>
+      <option value="solid">Solid</option>
+    </select>
+
+    <label>Dark Mode</label>
+
+    <select id="darkMode">
+      <option value="true">Aktif</option>
+      <option value="false">Nonaktif</option>
+    </select>
+
+  </div>
+
+
+  <button class="save" id="saveButton">
+    💾 Simpan Semua Perubahan
+  </button>
+
+  <div id="message"></div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+// ============================
+// CEK LOGIN
+// ============================
+
+async function checkLogin() {
+
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (!data.session) {
+    window.location.href = "admin.html";
+    return false;
+  }
+
+  return true;
+}
+
+
+// ============================
+// LOAD DATA
+// ============================
+
+async function loadData() {
+
+  // PROFIL
+
+  const { data: profile } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .limit(1)
+      .single();
+
+  if (profile) {
+
+    document.getElementById("profileName").value =
+      profile.name || "";
+
+    document.getElementById("profileSubtitle").value =
+      profile.subtitle || "";
+
+    document.getElementById("profileBio").value =
+      profile.bio || "";
+  }
+
+
+  // LINK
+
+  const { data: links } =
+    await supabaseClient
+      .from("links")
+      .select("*")
+      .order("sort_order");
+
+  const container =
+    document.getElementById("linksContainer");
+
+  container.innerHTML = "";
+
+  if (links && links.length) {
+
+    links.forEach((link, index) => {
+
+      const div = document.createElement("div");
+
+      div.className = "link-item";
+
+      div.innerHTML = `
+
+        <label>Judul Link ${index + 1}</label>
+
+        <input
+          class="link-title"
+          data-id="${link.id}"
+          value="${link.title || ""}"
+        >
+
+        <label>Deskripsi</label>
+
+        <input
+          class="link-description"
+          data-id="${link.id}"
+          value="${link.description || ""}"
+        >
+
+        <label>URL</label>
+
+        <input
+          class="link-url"
+          data-id="${link.id}"
+          value="${link.url || ""}"
+        >
+
+      `;
+
+      container.appendChild(div);
+
+    });
+
+  } else {
+
+    container.innerHTML =
+      "<div class='loading'>Belum ada link.</div>";
+  }
+
+
+  // TEMA
+
+  const { data: theme } =
+    await supabaseClient
+      .from("themes")
+      .select("*")
+      .limit(1)
+      .single();
+
+  if (theme) {
+
+    document.getElementById("backgroundType").value =
+      theme.background_type || "aurora";
+
+    document.getElementById("primaryColor").value =
+      theme.primary_color || "#3b82f6";
+
+    document.getElementById("secondaryColor").value =
+      theme.secondary_color || "#8b5cf6";
+
+    document.getElementById("cardStyle").value =
+      theme.card_style || "glass";
+
+    document.getElementById("darkMode").value =
+      String(theme.dark_mode);
+  }
+
+}
+
+
+// ============================
+// SIMPAN DATA
+// ============================
+
+async function saveData() {
+
+  const message =
+    document.getElementById("message");
+
+  const button =
+    document.getElementById("saveButton");
+
+  button.disabled = true;
+  button.textContent = "Menyimpan...";
+
+  message.textContent = "";
+
+
+  // PROFIL
+
+  const { data: profile } =
+    await supabaseClient
+      .from("profiles")
+      .select("id")
+      .limit(1)
+      .single();
+
+  if (profile) {
+
+    await supabaseClient
+      .from("profiles")
+      .update({
+        name:
+          document.getElementById("profileName").value,
+
+        subtitle:
+          document.getElementById("profileSubtitle").value,
+
+        bio:
+          document.getElementById("profileBio").value,
+
+        updated_at:
+          new Date().toISOString()
+      })
+      .eq("id", profile.id);
+  }
+
+
+  // LINK
+
+  const titles =
+    document.querySelectorAll(".link-title");
+
+  const descriptions =
+    document.querySelectorAll(".link-description");
+
+  const urls =
+    document.querySelectorAll(".link-url");
+
+
+  for (let i = 0; i < titles.length; i++) {
+
+    await supabaseClient
+      .from("links")
+      .update({
+
+        title: titles[i].value,
+
+        description:
+          descriptions[i].value,
+
+        url:
+          urls[i].value,
+
+        updated_at:
+          new Date().toISOString()
+
+      })
+      .eq("id", titles[i].dataset.id);
+  }
+
+
+  // TEMA
+
+  const { data: theme } =
+    await supabaseClient
+      .from("themes")
+      .select("id")
+      .limit(1)
+      .single();
+
+  if (theme) {
+
+    await supabaseClient
+      .from("themes")
+      .update({
+
+        background_type:
+          document.getElementById("backgroundType").value,
+
+        primary_color:
+          document.getElementById("primaryColor").value,
+
+        secondary_color:
+          document.getElementById("secondaryColor").value,
+
+        card_style:
+          document.getElementById("cardStyle").value,
+
+        dark_mode:
+          document.getElementById("darkMode").value === "true",
+
+        updated_at:
+          new Date().toISOString()
+
+      })
+      .eq("id", theme.id);
+  }
+
+
+  message.textContent =
+    "✅ Perubahan berhasil disimpan.";
+
+  button.disabled = false;
+  button.textContent =
+    "💾 Simpan Semua Perubahan";
+}
+
+
+// ============================
+// LOGOUT
+// ============================
+
+document
+  .getElementById("logoutButton")
+  .addEventListener("click", async () => {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "admin.html";
+
+  });
+
+
+// ============================
+// START
+// ============================
+
+(async () => {
+
+  const loggedIn = await checkLogin();
+
+  if (loggedIn) {
+    await loadData();
+  }
+
+})();
+
+
+document
+  .getElementById("saveButton")
+  .addEventListener("click", saveData);
+
+</script>
+
+</body>
+</html>
