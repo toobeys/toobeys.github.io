@@ -1,6 +1,12 @@
-// ==========================================
-// SUPABASE CONFIG
-// ==========================================
+/* =========================================================
+   NENDAR LINK IN BIO
+   GitHub Pages + Supabase
+   ========================================================= */
+
+
+/* =========================================================
+   SUPABASE CONFIG
+   ========================================================= */
 
 const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
@@ -11,9 +17,25 @@ const supabaseClient = supabase.createClient(
 );
 
 
-// ==========================================
-// DEFAULT PROFILE
-// ==========================================
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const linksContainer = document.getElementById("links");
+const socialContainer = document.getElementById("socialLinks");
+
+const profileName = document.getElementById("profileName");
+const profileSubtitle = document.getElementById("profileSubtitle");
+const profileBio = document.getElementById("profileBio");
+const profileAvatar = document.getElementById("profileAvatar");
+
+const themeToggle = document.getElementById("themeToggle");
+
+
+/* =========================================================
+   DEFAULT DATA
+   Dipakai sebagai fallback jika Supabase gagal
+   ========================================================= */
 
 const defaultProfile = {
   name: "Nendar",
@@ -23,230 +45,361 @@ const defaultProfile = {
 };
 
 
-// ==========================================
-// LOAD WEBSITE
-// ==========================================
+const defaultLinks = [
+  {
+    title: "Live Streaming",
+    description: "Tonton saya live sekarang!",
+    url: "#",
+    icon: "🔴"
+  },
+  {
+    title: "TikTok",
+    description: "Follow akun saya",
+    url: "#",
+    icon: "🎵"
+  },
+  {
+    title: "YouTube",
+    description: "Video terbaru",
+    url: "#",
+    icon: "▶️"
+  }
+];
+
+
+const defaultSocials = [
+  /*
+  {
+    platform: "TikTok",
+    url: "#",
+    icon: "♪"
+  },
+  {
+    platform: "YouTube",
+    url: "#",
+    icon: "▶"
+  }
+  */
+];
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  setupThemeToggle();
+
+  loadSavedTheme();
+
+  await loadWebsiteData();
+
+});
+
+
+/* =========================================================
+   LOAD ALL DATA FROM SUPABASE
+   ========================================================= */
 
 async function loadWebsiteData() {
 
   try {
 
-    // --------------------------------------
-    // PROFILE
-    // --------------------------------------
+    const [
+      profileResult,
+      linksResult,
+      socialsResult,
+      themeResult
+    ] = await Promise.all([
 
-    const { data: profile, error: profileError } =
-      await supabaseClient
+      supabaseClient
         .from("profiles")
         .select("*")
         .limit(1)
-        .single();
+        .maybeSingle(),
 
-    if (profileError) {
-      console.error("Profile error:", profileError);
-    }
-
-
-    // --------------------------------------
-    // LINKS
-    // --------------------------------------
-
-    const { data: links, error: linksError } =
-      await supabaseClient
+      supabaseClient
         .from("links")
         .select("*")
         .eq("is_active", true)
-        .order("sort_order", {
-          ascending: true
-        });
+        .order("sort_order", { ascending: true }),
 
-    if (linksError) {
-      console.error("Links error:", linksError);
-    }
-
-
-    // --------------------------------------
-    // SOCIALS
-    // --------------------------------------
-
-    const { data: socials, error: socialsError } =
-      await supabaseClient
+      supabaseClient
         .from("socials")
         .select("*")
         .eq("is_active", true)
-        .order("sort_order", {
-          ascending: true
-        });
+        .order("sort_order", { ascending: true }),
 
-    if (socialsError) {
-      console.error("Socials error:", socialsError);
-    }
-
-
-    // --------------------------------------
-    // THEME
-    // --------------------------------------
-
-    const { data: theme, error: themeError } =
-      await supabaseClient
+      supabaseClient
         .from("themes")
         .select("*")
         .limit(1)
-        .single();
+        .maybeSingle()
 
-    if (themeError) {
-      console.error("Theme error:", themeError);
+    ]);
+
+
+    /* -----------------------------------------------------
+       PROFILE
+       ----------------------------------------------------- */
+
+    if (profileResult.error) {
+
+      console.error(
+        "Gagal mengambil profile:",
+        profileResult.error
+      );
+
+      applyProfile(defaultProfile);
+
+    } else {
+
+      applyProfile(
+        profileResult.data || defaultProfile
+      );
+
     }
 
 
-    // --------------------------------------
-    // APPLY DATA
-    // --------------------------------------
+    /* -----------------------------------------------------
+       LINKS
+       ----------------------------------------------------- */
 
-    applyProfile(profile || defaultProfile);
+    if (linksResult.error) {
 
-    applyLinks(links || []);
+      console.error(
+        "Gagal mengambil links:",
+        linksResult.error
+      );
 
-    applySocials(socials || []);
+      applyLinks(defaultLinks);
 
-    if (theme) {
-      applyTheme(theme);
+    } else {
+
+      const links =
+        linksResult.data &&
+        linksResult.data.length > 0
+          ? linksResult.data
+          : defaultLinks;
+
+      applyLinks(links);
+
+    }
+
+
+    /* -----------------------------------------------------
+       SOCIALS
+       ----------------------------------------------------- */
+
+    if (socialsResult.error) {
+
+      console.error(
+        "Gagal mengambil socials:",
+        socialsResult.error
+      );
+
+      applySocials(defaultSocials);
+
+    } else {
+
+      const socials =
+        socialsResult.data &&
+        socialsResult.data.length > 0
+          ? socialsResult.data
+          : defaultSocials;
+
+      applySocials(socials);
+
+    }
+
+
+    /* -----------------------------------------------------
+       THEME
+       ----------------------------------------------------- */
+
+    if (themeResult.error) {
+
+      console.error(
+        "Gagal mengambil theme:",
+        themeResult.error
+      );
+
+    } else if (themeResult.data) {
+
+      applyTheme(themeResult.data);
+
     }
 
   } catch (error) {
 
     console.error(
-      "Gagal mengambil data Supabase:",
+      "Terjadi error saat memuat website:",
       error
     );
 
+    /*
+     * Kalau Supabase gagal total,
+     * website tetap menampilkan konten default.
+     */
+
     applyProfile(defaultProfile);
+    applyLinks(defaultLinks);
+    applySocials(defaultSocials);
+
   }
+
 }
 
 
-// ==========================================
-// APPLY PROFILE
-// ==========================================
+/* =========================================================
+   APPLY PROFILE
+   ========================================================= */
 
 function applyProfile(profile) {
 
-  const nameElement =
-    document.querySelector(".profile h1");
+  const name =
+    profile.name ||
+    defaultProfile.name;
 
-  const subtitleElement =
-    document.querySelector(".profile .subtitle");
+  const subtitle =
+    profile.subtitle ||
+    defaultProfile.subtitle;
 
-  const welcomeElement =
-    document.querySelector(".profile .welcome");
+  const bio =
+    profile.bio ||
+    defaultProfile.bio;
 
-  const avatarElement =
-    document.querySelector(".avatar");
-
-
-  // Nama
-
-  if (nameElement) {
-
-    nameElement.textContent =
-      profile.name || defaultProfile.name;
-
-  }
+  const avatar =
+    profile.avatar_url ||
+    defaultProfile.avatar_url;
 
 
-  // Subtitle
+  profileName.textContent = name;
 
-  if (subtitleElement) {
+  /*
+   * Subtitle
+   * Mengubah tanda • menjadi span agar
+   * tampilan tetap sama dengan desain lama.
+   */
 
-    subtitleElement.innerHTML =
-      escapeHtml(
-        profile.subtitle ||
-        defaultProfile.subtitle
-      ).replace(
-        " • ",
-        " <span>•</span> "
-      );
+  const subtitleParts = subtitle.split("•");
 
-  }
+  if (subtitleParts.length >= 2) {
 
+    profileSubtitle.innerHTML =
+      `${escapeHtml(subtitleParts[0].trim())}
+       <span>•</span>
+       ${escapeHtml(subtitleParts.slice(1).join("•").trim())}`;
 
-  // Bio
+  } else {
 
-  if (welcomeElement) {
-
-    welcomeElement.textContent =
-      profile.bio ||
-      defaultProfile.bio;
+    profileSubtitle.textContent = subtitle;
 
   }
 
 
-  // Foto
+  profileBio.textContent = bio;
 
-  if (
-    avatarElement &&
-    profile.avatar_url
-  ) {
 
-    avatarElement.src =
-      profile.avatar_url;
+  if (avatar) {
+
+    profileAvatar.src = avatar;
 
   }
+
 }
 
 
-// ==========================================
-// APPLY LINKS
-// ==========================================
+/* =========================================================
+   APPLY LINKS
+   ========================================================= */
 
 function applyLinks(links) {
 
-  const container =
-    document.getElementById("links");
+  linksContainer.innerHTML = "";
 
-  if (!container) {
+
+  if (!links || links.length === 0) {
+
+    linksContainer.innerHTML = `
+      <div class="empty-state">
+        Belum ada link.
+      </div>
+    `;
+
     return;
+
   }
 
 
-  container.innerHTML = "";
+  links.forEach((link) => {
+
+    const card = document.createElement("a");
+
+    card.className = "link-card";
+
+    /*
+     * Jika URL kosong,
+     * jangan biarkan browser error.
+     */
+
+    const url =
+      link.url &&
+      link.url.trim() !== ""
+        ? link.url
+        : "#";
 
 
-  links.forEach(link => {
-
-    const a =
-      document.createElement("a");
-
-    a.href =
-      link.url || "#";
-
-    a.className =
-      "link-card";
-
-    a.target =
-      "_blank";
-
-    a.rel =
-      "noopener noreferrer";
+    card.href = url;
 
 
-    a.innerHTML = `
+    /*
+     * Link eksternal dibuka di tab baru.
+     */
 
+    if (
+      url !== "#" &&
+      !url.startsWith(window.location.origin)
+    ) {
+
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+
+    }
+
+
+    const icon =
+      link.icon ||
+      "🔗";
+
+
+    const title =
+      link.title ||
+      "Link";
+
+
+    const description =
+      link.description ||
+      "";
+
+
+    card.innerHTML = `
       <div class="link-icon">
-        ${escapeHtml(link.icon || "🔗")}
+        ${escapeHtml(icon)}
       </div>
 
       <div class="link-content">
 
         <div class="link-title">
-          ${escapeHtml(link.title || "")}
+          ${escapeHtml(title)}
         </div>
 
         ${
-          link.description
+          description
             ? `
               <div class="link-description">
-                ${escapeHtml(link.description)}
+                ${escapeHtml(description)}
               </div>
             `
             : ""
@@ -254,76 +407,181 @@ function applyLinks(links) {
 
       </div>
 
+      <div class="link-arrow">
+        →
+      </div>
     `;
 
 
-    container.appendChild(a);
+    linksContainer.appendChild(card);
 
   });
 
 }
 
 
-// ==========================================
-// APPLY SOCIALS
-// ==========================================
+/* =========================================================
+   APPLY SOCIALS
+   ========================================================= */
 
 function applySocials(socials) {
 
-  const container =
-    document.getElementById("socialLinks");
+  socialContainer.innerHTML = "";
 
-  if (!container) {
+
+  /*
+   * Kalau belum ada social media,
+   * sembunyikan section agar tidak kosong.
+   */
+
+  if (!socials || socials.length === 0) {
+
+    const socialSection =
+      document.querySelector(".social");
+
+    if (socialSection) {
+      socialSection.style.display = "none";
+    }
+
+    return;
+
+  }
+
+
+  const socialSection =
+    document.querySelector(".social");
+
+  if (socialSection) {
+    socialSection.style.display = "";
+  }
+
+
+  socials.forEach((social) => {
+
+    const item = document.createElement("a");
+
+    item.className = "social-link";
+
+    item.href =
+      social.url &&
+      social.url.trim() !== ""
+        ? social.url
+        : "#";
+
+
+    item.target = "_blank";
+
+    item.rel =
+      "noopener noreferrer";
+
+
+    const icon =
+      social.icon ||
+      getSocialIcon(social.platform);
+
+
+    item.setAttribute(
+      "aria-label",
+      social.platform || "Social media"
+    );
+
+
+    item.title =
+      social.platform || "Social media";
+
+
+    item.innerHTML = `
+      <span>
+        ${escapeHtml(icon)}
+      </span>
+    `;
+
+
+    socialContainer.appendChild(item);
+
+  });
+
+}
+
+
+/* =========================================================
+   SOCIAL ICON FALLBACK
+   ========================================================= */
+
+function getSocialIcon(platform) {
+
+  if (!platform) {
+    return "🔗";
+  }
+
+
+  const name =
+    platform.toLowerCase();
+
+
+  if (name.includes("tiktok")) {
+    return "♪";
+  }
+
+
+  if (name.includes("youtube")) {
+    return "▶";
+  }
+
+
+  if (name.includes("instagram")) {
+    return "◎";
+  }
+
+
+  if (name.includes("facebook")) {
+    return "f";
+  }
+
+
+  if (name.includes("whatsapp")) {
+    return "☏";
+  }
+
+
+  if (name.includes("telegram")) {
+    return "➤";
+  }
+
+
+  if (name.includes("discord")) {
+    return "◉";
+  }
+
+
+  if (name.includes("x")) {
+    return "𝕏";
+  }
+
+
+  return "🔗";
+
+}
+
+
+/* =========================================================
+   APPLY THEME
+   ========================================================= */
+
+function applyTheme(theme) {
+
+  if (!theme) {
     return;
   }
 
 
-  container.innerHTML = "";
-
-
-  socials.forEach(social => {
-
-    const a =
-      document.createElement("a");
-
-    a.href =
-      social.url || "#";
-
-    a.target =
-      "_blank";
-
-    a.rel =
-      "noopener noreferrer";
-
-    a.className =
-      "social-link";
-
-    a.setAttribute(
-      "aria-label",
-      social.platform || "Social"
-    );
-
-
-    a.innerHTML =
-      social.icon || "🔗";
-
-
-    container.appendChild(a);
-
-  });
-
-}
-
-
-// ==========================================
-// APPLY THEME
-// ==========================================
-
-function applyTheme(theme) {
-
   const root =
     document.documentElement;
 
+
+  /*
+   * Warna utama
+   */
 
   if (theme.primary_color) {
 
@@ -335,6 +593,10 @@ function applyTheme(theme) {
   }
 
 
+  /*
+   * Warna kedua
+   */
+
   if (theme.secondary_color) {
 
     root.style.setProperty(
@@ -345,13 +607,9 @@ function applyTheme(theme) {
   }
 
 
-  if (theme.card_style) {
-
-    document.body.dataset.cardStyle =
-      theme.card_style;
-
-  }
-
+  /*
+   * Background type
+   */
 
   if (theme.background_type) {
 
@@ -360,32 +618,207 @@ function applyTheme(theme) {
 
   }
 
+
+  /*
+   * Card style
+   */
+
+  if (theme.card_style) {
+
+    document.body.dataset.cardStyle =
+      theme.card_style;
+
+  }
+
+
+  /*
+   * Dark mode dari database
+   *
+   * Hanya diterapkan kalau belum ada
+   * preferensi tema tersimpan di browser.
+   */
+
+  const savedTheme =
+    localStorage.getItem("nendar-theme");
+
+
+  if (!savedTheme) {
+
+    if (theme.dark_mode === false) {
+
+      document.documentElement
+        .setAttribute(
+          "data-theme",
+          "light"
+        );
+
+      updateThemeButton(false);
+
+    } else {
+
+      document.documentElement
+        .setAttribute(
+          "data-theme",
+          "dark"
+        );
+
+      updateThemeButton(true);
+
+    }
+
+  }
+
 }
 
 
-// ==========================================
-// ESCAPE HTML
-// ==========================================
+/* =========================================================
+   THEME TOGGLE
+   ========================================================= */
+
+function setupThemeToggle() {
+
+  if (!themeToggle) {
+    return;
+  }
+
+
+  themeToggle.addEventListener(
+    "click",
+    () => {
+
+      const current =
+        document.documentElement
+          .getAttribute("data-theme");
+
+
+      const isDark =
+        current !== "light";
+
+
+      if (isDark) {
+
+        document.documentElement
+          .setAttribute(
+            "data-theme",
+            "light"
+          );
+
+        localStorage.setItem(
+          "nendar-theme",
+          "light"
+        );
+
+        updateThemeButton(false);
+
+      } else {
+
+        document.documentElement
+          .setAttribute(
+            "data-theme",
+            "dark"
+          );
+
+        localStorage.setItem(
+          "nendar-theme",
+          "dark"
+        );
+
+        updateThemeButton(true);
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOAD SAVED THEME
+   ========================================================= */
+
+function loadSavedTheme() {
+
+  const savedTheme =
+    localStorage.getItem(
+      "nendar-theme"
+    );
+
+
+  if (!savedTheme) {
+    return;
+  }
+
+
+  document.documentElement
+    .setAttribute(
+      "data-theme",
+      savedTheme
+    );
+
+
+  updateThemeButton(
+    savedTheme === "dark"
+  );
+
+}
+
+
+/* =========================================================
+   THEME BUTTON ICON
+   ========================================================= */
+
+function updateThemeButton(isDark) {
+
+  if (!themeToggle) {
+    return;
+  }
+
+
+  if (isDark) {
+
+    themeToggle.textContent = "☀";
+
+    themeToggle.setAttribute(
+      "aria-label",
+      "Aktifkan mode terang"
+    );
+
+    themeToggle.setAttribute(
+      "title",
+      "Aktifkan mode terang"
+    );
+
+  } else {
+
+    themeToggle.textContent = "☾";
+
+    themeToggle.setAttribute(
+      "aria-label",
+      "Aktifkan mode gelap"
+    );
+
+    themeToggle.setAttribute(
+      "title",
+      "Aktifkan mode gelap"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
 
 function escapeHtml(value) {
 
   return String(value)
-
-    .replace(/&/g, "&amp;")
-
-    .replace(/</g, "&lt;")
-
-    .replace(/>/g, "&gt;")
-
-    .replace(/"/g, "&quot;")
-
-    .replace(/'/g, "&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 }
-
-
-// ==========================================
-// START
-// ==========================================
-
-loadWebsiteData();
