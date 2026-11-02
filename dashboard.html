@@ -76,11 +76,14 @@ button{cursor:pointer}
 .brand-sub{font-size:12px;color:#64748b;margin-top:5px}
 .nav{display:flex;flex-direction:column;gap:7px}
 .nav button{
-  width:100%;border:1px solid rgba(148,163,184,.10);background:rgba(15,23,42,.30);color:#94a3b8;
-  text-align:left;padding:11px 12px;border-radius:13px;font-weight:800;transition:.22s;
-  min-height:45px
+  width:100%;height:76px;border:1px solid rgba(148,163,184,.10);background:rgba(15,23,42,.30);
+  color:#94a3b8;text-align:center;padding:9px 6px;border-radius:12px;font-weight:800;
+  transition:.22s;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:5px
 }
 .nav button:hover{background:rgba(59,130,246,.08);color:#e2e8f0;border-color:rgba(96,165,250,.1)}
+.tab-icon{font-size:20px;line-height:1}
+.tab-label{font-size:11px;line-height:1}
 .nav button.active{
   color:#fff;background:linear-gradient(135deg,rgba(59,130,246,.19),rgba(139,92,246,.13));
   border-color:rgba(96,165,250,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)
@@ -199,7 +202,16 @@ input[type=file]{display:none}
 .color-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .color-control{display:flex;gap:10px;align-items:center}
 .color-control input[type=color]{width:55px;height:43px;padding:3px}
-.preview-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start;position:sticky;top:95px}
+.design-workspace{position:relative}
+.design-workspace > .card:not(.preview-layout){max-width:calc(100% - 382px)}
+.design-workspace > .preview-layout{
+  position:absolute;right:0;top:0;width:360px;margin:0;
+  display:flex;flex-direction:column;gap:14px;
+  padding:18px;z-index:2
+}
+.design-workspace > .preview-layout > div:first-child{display:block}
+.design-workspace > .preview-layout .preview-phone{max-width:100%;width:100%;height:570px}
+
 .preview-phone{
   width:100%;max-width:340px;height:620px;margin:auto;border:9px solid #020617;
   border-radius:34px;background:#020617;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.42)
@@ -217,14 +229,19 @@ input[type=file]{display:none}
 .empty{text-align:center;padding:30px;color:#64748b;border:1px dashed var(--border);border-radius:14px}
 .help{font-size:12px;color:#64748b;margin-top:6px}
 @media(max-width:1100px){
+  .design-workspace > .card:not(.preview-layout){max-width:none}
+  .design-workspace > .preview-layout{
+    position:static;width:auto;margin-bottom:18px;
+  }
+
   .design-grid{grid-template-columns:repeat(2,1fr)}
   .preview-layout{grid-template-columns:1fr}.preview-phone{max-width:330px}
 }
 @media(max-width:760px){
   .sidebar{width:68px;padding:16px 8px}
   .brand{padding:4px 0 20px;text-align:center}.brand-title{font-size:16px}
-  .brand-sub,.nav button span,.public-btn,.logout-btn{display:none}
-  .nav button{font-size:20px;text-align:center;padding:10px 5px;border-radius:12px}
+  .brand-sub,.public-btn,.logout-btn{display:none}.nav button .tab-label{display:block}.nav button .tab-icon{display:block}
+  .nav button{font-size:20px;text-align:center;padding:8px 4px;border-radius:12px;height:64px;gap:4px}
   .main{margin-left:68px;width:calc(100% - 68px)}
   .topbar{height:auto;min-height:70px;padding:12px 16px}.top-sub{display:none}
   .content-wrap{padding:16px}.preview-layout{position:static}.grid2,.link-grid,.color-row,.profile-layout{grid-template-columns:1fr}
@@ -245,9 +262,9 @@ input[type=file]{display:none}
   </div>
 
   <nav class="nav">
-    <button class="active" data-tab="content"><span>🔗</span> <span>Content</span></button>
-    <button data-tab="header"><span>👤</span> <span>Header</span></button>
-    <button data-tab="design"><span>🎨</span> <span>Design</span></button>
+    <button class="active" data-tab="content"><span class="tab-icon">🔗</span><span class="tab-label">Content</span></button>
+    <button data-tab="header"><span class="tab-icon">👤</span><span class="tab-label">Header</span></button>
+    <button data-tab="design"><span class="tab-icon">🎨</span><span class="tab-label">Design</span></button>
   </nav>
 
   <div class="sidebar-bottom">
@@ -320,7 +337,7 @@ input[type=file]{display:none}
       </div>
     </section>
 
-    <section class="tab" id="tab-design">
+    <section class="tab design-workspace" id="tab-design">
       <div class="section-head">
         <h2>Design</h2>
         <p>Pilih tampilan visual dan warna halaman.</p>
@@ -422,8 +439,8 @@ input[type=file]{display:none}
 
       <div class="card preview-layout">
         <div>
-          <h3 style="margin-top:0">Live Preview</h3>
-          <p class="help">Preview mengambil tampilan website publik terbaru.</p>
+          <h3 style="margin:0">Live Preview</h3>
+          <p class="help">Tampilan website publik.</p>
         </div>
         <div class="preview-phone">
           <iframe id="previewFrame" title="Preview Website"></iframe>
@@ -663,17 +680,10 @@ function renderLinks(){
           </div>
 
           <div class="field">
-            <label>Icon / Emoji fallback</label>
-            <input type="text" value="${escapeHtml(link.icon || "🔗")}"
-              oninput="updateLink(${index},'icon',this.value)"
-              placeholder="🔗">
-          </div>
-
-          <div class="field">
             <label>Icon Gambar</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <label class="file-label">
-                📷 Upload Icon
+                📷 Ubah Icon
                 <input type="file" accept="image/*" onchange="uploadLinkIcon(${index},this.files[0])">
               </label>
               <button class="btn btn-danger btn-small" onclick="deleteLinkIcon(${index})">Hapus Icon</button>
