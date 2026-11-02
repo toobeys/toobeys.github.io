@@ -4,7 +4,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
 
-
 const supabaseClient =
   supabase.createClient(
     SUPABASE_URL,
@@ -12,10 +11,14 @@ const supabaseClient =
   );
 
 
+/* =========================================
+   DEFAULT DATA
+========================================= */
+
 const defaultProfile = {
-  name: "Nendar",
+  name: "Toobey",
   subtitle: "Gaming • Creator",
-  bio: "Terima kasih sudah berkunjung!",
+  bio: "Selamat datang di halaman Toobey!",
   avatar_url: null
 };
 
@@ -45,6 +48,10 @@ const defaultLinks = [
 ];
 
 
+/* =========================================
+   START
+========================================= */
+
 document.addEventListener(
   "DOMContentLoaded",
   init
@@ -60,6 +67,10 @@ async function init() {
 }
 
 
+/* =========================================
+   LOAD PAGE
+========================================= */
+
 async function loadPage() {
 
   try {
@@ -74,6 +85,9 @@ async function loadPage() {
       supabaseClient
         .from("profiles")
         .select("*")
+        .order("id", {
+          ascending: true
+        })
         .limit(1)
         .maybeSingle(),
 
@@ -102,16 +116,49 @@ async function loadPage() {
       supabaseClient
         .from("themes")
         .select("*")
+        .order("id", {
+          ascending: true
+        })
         .limit(1)
         .maybeSingle()
 
     ]);
 
 
-    const profile =
+    /* =====================================
+       PROFILE
+    ===================================== */
+
+    let profile =
       profileResult.data ||
       defaultProfile;
 
+
+    /*
+      Pastikan tidak pernah kembali
+      ke nama Nendar sebagai fallback.
+    */
+
+    if (!profile.name) {
+      profile.name = "Toobey";
+    }
+
+
+    if (!profile.subtitle) {
+      profile.subtitle =
+        "Gaming • Creator";
+    }
+
+
+    if (!profile.bio) {
+      profile.bio =
+        "Selamat datang di halaman Toobey!";
+    }
+
+
+    /* =====================================
+       LINKS
+    ===================================== */
 
     const links =
       linksResult.data &&
@@ -120,15 +167,25 @@ async function loadPage() {
         : defaultLinks;
 
 
-    const socials =
-      socialsResult.data ||
-      [];
+    /* =====================================
+       SOCIALS
+    ===================================== */
 
+    const socials =
+      socialsResult.data || [];
+
+
+    /* =====================================
+       THEME
+    ===================================== */
 
     const theme =
-      themeResult.data ||
-      null;
+      themeResult.data || null;
 
+
+    /* =====================================
+       APPLY
+    ===================================== */
 
     applyProfile(profile);
 
@@ -139,6 +196,39 @@ async function loadPage() {
     applyTheme(theme);
 
 
+    /* =====================================
+       ERROR LOGGING
+    ===================================== */
+
+    if (profileResult.error) {
+      console.error(
+        "Profile error:",
+        profileResult.error
+      );
+    }
+
+    if (linksResult.error) {
+      console.error(
+        "Links error:",
+        linksResult.error
+      );
+    }
+
+    if (socialsResult.error) {
+      console.error(
+        "Socials error:",
+        socialsResult.error
+      );
+    }
+
+    if (themeResult.error) {
+      console.error(
+        "Theme error:",
+        themeResult.error
+      );
+    }
+
+
   } catch (error) {
 
     console.error(
@@ -147,6 +237,11 @@ async function loadPage() {
     );
 
 
+    /*
+      Fallback tetap menggunakan
+      identitas Toobey.
+    */
+
     applyProfile(
       defaultProfile
     );
@@ -154,6 +249,8 @@ async function loadPage() {
     renderLinks(
       defaultLinks
     );
+
+    renderSocials([]);
 
   }
 
@@ -167,43 +264,57 @@ async function loadPage() {
 function applyProfile(profile) {
 
   const title =
-    document.querySelector(
-      ".profile h1"
+    document.getElementById(
+      "profileName"
     );
+
 
   const subtitle =
-    document.querySelector(
-      ".profile .subtitle"
+    document.getElementById(
+      "profileSubtitle"
     );
+
 
   const welcome =
-    document.querySelector(
-      ".profile .welcome"
+    document.getElementById(
+      "profileBio"
     );
+
 
   const avatar =
-    document.querySelector(
-      ".avatar"
+    document.getElementById(
+      "profileAvatar"
     );
 
+
+  /* =====================================
+     NAME
+  ===================================== */
 
   if (title) {
 
     title.textContent =
       profile.name ||
-      "Nendar";
+      "Toobey";
 
   }
 
 
+  /* =====================================
+     SUBTITLE
+  ===================================== */
+
   if (subtitle) {
+
+    const subtitleText =
+      profile.subtitle ||
+      "Gaming • Creator";
+
 
     subtitle.innerHTML =
       escapeHtml(
-        profile.subtitle ||
-        "Gaming • Creator"
-      )
-      .replace(
+        subtitleText
+      ).replace(
         "•",
         "<span>•</span>"
       );
@@ -211,14 +322,22 @@ function applyProfile(profile) {
   }
 
 
+  /* =====================================
+     BIO
+  ===================================== */
+
   if (welcome) {
 
     welcome.textContent =
       profile.bio ||
-      "Terima kasih sudah berkunjung!";
+      "Selamat datang di halaman Toobey!";
 
   }
 
+
+  /* =====================================
+     PROFILE IMAGE
+  ===================================== */
 
   if (
     avatar &&
@@ -278,34 +397,46 @@ function renderLinks(links) {
         "noopener noreferrer";
 
 
-      const media =
-        link.icon_url
-          ?
-          `
+      /* ===================================
+         ICON
+      =================================== */
+
+      let media = "";
+
+
+      if (link.icon_url) {
+
+        media = `
           <img
             src="${escapeHtml(link.icon_url)}"
             alt=""
             class="link-icon-image"
+            loading="lazy"
           >
-          `
-          :
-          `
+        `;
+
+      } else {
+
+        media = `
           <span class="link-icon">
             ${escapeHtml(
               link.icon || "🔗"
             )}
           </span>
-          `;
+        `;
 
+      }
+
+
+      /* ===================================
+         CARD
+      =================================== */
 
       card.innerHTML = `
 
         <div class="link-icon-wrap">
-
           ${media}
-
         </div>
-
 
         <div class="link-content">
 
@@ -319,18 +450,17 @@ function renderLinks(links) {
             link.description
               ?
               `
-              <div class="link-description">
-                ${escapeHtml(
-                  link.description
-                )}
-              </div>
+                <div class="link-description">
+                  ${escapeHtml(
+                    link.description
+                  )}
+                </div>
               `
               :
               ""
           }
 
         </div>
-
 
         <div class="link-arrow">
           →
@@ -350,7 +480,7 @@ function renderLinks(links) {
 
 
 /* =========================================
-   SOCIAL
+   SOCIALS
 ========================================= */
 
 function renderSocials(
@@ -379,7 +509,10 @@ function renderSocials(
   }
 
 
-  if (!socials.length) {
+  if (
+    !socials ||
+    !socials.length
+  ) {
 
     section.style.display =
       "none";
@@ -422,9 +555,11 @@ function renderSocials(
 
 
       link.innerHTML =
-        social.icon ||
-        social.platform ||
-        "🔗";
+        escapeHtml(
+          social.icon ||
+          social.platform ||
+          "🔗"
+        );
 
 
       container.appendChild(
@@ -482,8 +617,7 @@ function applyTheme(
     theme.background_type
   ) {
 
-    document.body.dataset
-      .background =
+    document.body.dataset.background =
       theme.background_type;
 
   }
@@ -518,11 +652,17 @@ function setupThemeToggle() {
     savedTheme === "light"
   ) {
 
-    document.body.classList
-      .add("light-mode");
+    document.body.classList.add(
+      "light-mode"
+    );
 
     button.textContent =
       "☀";
+
+  } else {
+
+    button.textContent =
+      "☾";
 
   }
 
@@ -531,17 +671,15 @@ function setupThemeToggle() {
     "click",
     function () {
 
-      document.body.classList
-        .toggle(
-          "light-mode"
-        );
+      document.body.classList.toggle(
+        "light-mode"
+      );
 
 
       const isLight =
-        document.body.classList
-          .contains(
-            "light-mode"
-          );
+        document.body.classList.contains(
+          "light-mode"
+        );
 
 
       localStorage.setItem(
@@ -564,12 +702,14 @@ function setupThemeToggle() {
 
 
 /* =========================================
-   ESCAPE
+   ESCAPE HTML
 ========================================= */
 
 function escapeHtml(value) {
 
-  return String(value || "")
+  return String(
+    value ?? ""
+  )
     .replaceAll(
       "&",
       "&amp;"
