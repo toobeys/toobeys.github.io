@@ -244,8 +244,12 @@ input[type=file]{display:none}
 }
 @media(max-width:480px){.design-grid{grid-template-columns:1fr}.link-actions{flex-wrap:wrap}}
 
-.dashboard-workspace{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;align-items:start}
+.dashboard-workspace{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:42px;align-items:start;padding-left:18px;padding-right:24px}
 .editor-column{min-width:0}
+@media(min-width:1400px){
+  .dashboard-workspace{grid-template-columns:minmax(0,1fr) 400px;gap:48px;padding-left:16px;padding-right:28px}
+  .persistent-preview{padding:16px}
+}
 .persistent-preview{position:sticky;top:18px;display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--border);border-radius:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:var(--shadow)}
 .preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .preview-head strong{display:block;font-size:14px;color:#f8fafc}
@@ -258,8 +262,8 @@ input[type=file]{display:none}
 .persistent-preview .preview-phone.is-scrolling::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28)}
 .persistent-preview .preview-phone.is-scrolling::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.42)}
 .persistent-preview iframe{display:block}
-@media(max-width:1100px){.dashboard-workspace{grid-template-columns:minmax(0,1fr) 320px}.persistent-preview .preview-phone{height:600px;min-height:0}}
-@media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}.persistent-preview{order:2}.editor-column{order:1}}
+@media(max-width:1100px){.dashboard-workspace{grid-template-columns:minmax(0,1fr) 340px;gap:30px;padding-left:14px;padding-right:18px}.persistent-preview .preview-phone{height:600px;min-height:0}}
+@media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr;gap:20px;padding-left:0;padding-right:0}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}.persistent-preview{order:2}.editor-column{order:1}}
 </style>
 </head>
 
