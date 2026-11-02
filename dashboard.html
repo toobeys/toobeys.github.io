@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Admin — Nendar Link</title>
+  <title>Dashboard Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -13,102 +15,58 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(59,130,246,.20), transparent 35%),
-        radial-gradient(circle at 90% 20%, rgba(139,92,246,.18), transparent 35%),
-        #071126;
+      font-family: Arial, sans-serif;
+      background: #071126;
       color: #fff;
-      padding: 30px 16px 60px;
+      padding: 30px 15px;
     }
 
-    .admin-page {
-      width: min(100%, 900px);
+    .container {
+      max-width: 900px;
       margin: auto;
     }
 
-    .admin-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 25px;
+    h1 {
+      margin-bottom: 8px;
     }
 
-    .admin-header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .admin-header p {
-      margin: 6px 0 0;
+    .subtitle {
       color: #9ca3af;
-      font-size: 14px;
+      margin-bottom: 30px;
     }
 
-    button {
-      border: 0;
-      cursor: pointer;
-      font: inherit;
-    }
-
-    .logout-btn {
-      padding: 10px 16px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.08);
-      color: #fff;
+    .card {
+      background: rgba(255,255,255,.07);
       border: 1px solid rgba(255,255,255,.12);
-    }
-
-    .logout-btn:hover {
-      background: rgba(255,255,255,.14);
-    }
-
-    .panel {
-      background: rgba(15,23,42,.72);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 20px;
+      border-radius: 18px;
       padding: 22px;
       margin-bottom: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.20);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(14px);
     }
 
-    .panel h2 {
-      margin: 0 0 18px;
-      font-size: 19px;
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
     }
 
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field label {
+    label {
       display: block;
       margin-bottom: 7px;
-      font-size: 13px;
+      font-size: 14px;
       color: #cbd5e1;
-      font-weight: 600;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 11px;
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      padding: 11px 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.25);
+      color: white;
       outline: none;
-      font: inherit;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #3b82f6;
+      margin-bottom: 16px;
     }
 
     textarea {
@@ -116,1915 +74,1394 @@
       resize: vertical;
     }
 
-    select option {
-      background: #111827;
-      color: #fff;
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #60a5fa;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.1);
+      color: white;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .profile-preview {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
       margin-bottom: 20px;
     }
 
     .profile-preview img {
-      width: 75px;
-      height: 75px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(255,255,255,.15);
+      border: 3px solid rgba(255,255,255,.2);
     }
 
-    .profile-preview strong {
-      display: block;
-      margin-bottom: 4px;
+    .profile-preview-info {
+      flex: 1;
     }
 
-    .profile-preview span {
-      color: #94a3b8;
-      font-size: 13px;
+    .upload-label {
+      display: inline-block;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+
+    .upload-label:hover {
+      background: rgba(255,255,255,.16);
+    }
+
+    .upload-label input {
+      display: none;
     }
 
     .link-item {
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 16px;
       padding: 18px;
-      margin-bottom: 16px;
-      background: rgba(255,255,255,.035);
+      margin-bottom: 15px;
+      background: rgba(0,0,0,.16);
     }
 
     .link-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
       margin-bottom: 15px;
     }
 
     .link-number {
-      font-weight: 700;
+      font-weight: bold;
       color: #93c5fd;
     }
 
-    .link-status {
+    .icon-preview-area {
       display: flex;
       align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
-
-    .link-status input {
-      width: auto;
-    }
-
-    .two-column {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .media-options {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .media-option {
-      flex: 1;
-      position: relative;
-    }
-
-    .media-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .media-option label {
-      display: block;
-      text-align: center;
-      padding: 11px;
-      border-radius: 11px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .media-option input:checked + label {
-      border-color: #3b82f6;
-      background: rgba(59,130,246,.16);
-      color: #bfdbfe;
-    }
-
-    .icon-box {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
     }
 
     .icon-preview {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 48px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      font-size: 25px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .thumbnail-area {
-      display: none;
-    }
-
-    .thumbnail-area.active {
-      display: block;
-    }
-
-    .thumbnail-preview {
-      width: 100%;
-      max-width: 180px;
-      aspect-ratio: 16 / 9;
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
       object-fit: cover;
-      border-radius: 12px;
-      display: block;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-    }
-
-    .upload-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    .small-btn {
-      padding: 9px 13px;
-      border-radius: 10px;
       background: rgba(255,255,255,.08);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.15);
     }
 
-    .small-btn:hover {
-      background: rgba(255,255,255,.13);
+    .icon-placeholder {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
     }
 
-    .delete-thumb {
-      background: rgba(239,68,68,.12);
-      color: #fca5a5;
+    .icon-upload {
+      flex: 1;
     }
 
-    .save-area {
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .checkbox-row input {
+      width: auto;
+      margin: 0;
+    }
+
+    .save-bar {
       position: sticky;
       bottom: 15px;
-      z-index: 20;
-      padding-top: 5px;
-    }
-
-    .save-btn {
-      width: 100%;
+      background: rgba(7,17,38,.9);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(15px);
       padding: 15px;
-      border-radius: 14px;
-      background: linear-gradient(
-        135deg,
-        #3b82f6,
-        #8b5cf6
-      );
-      color: #fff;
-      font-weight: 700;
-      font-size: 15px;
-      box-shadow: 0 10px 30px rgba(59,130,246,.25);
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-top: 25px;
     }
 
-    .save-btn:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    .message {
-      margin-top: 12px;
-      text-align: center;
+    .status {
       font-size: 14px;
-      min-height: 20px;
-    }
-
-    .success {
-      color: #86efac;
-    }
-
-    .error {
-      color: #fca5a5;
-    }
-
-    .loading {
-      color: #93c5fd;
+      color: #9ca3af;
     }
 
     .theme-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .color-row input[type="color"] {
-      width: 55px;
-      height: 42px;
-      padding: 3px;
-      cursor: pointer;
-    }
-
-    .switch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       gap: 15px;
-      padding: 13px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.04);
-    }
-
-    .switch-row input {
-      width: auto;
     }
 
     @media (max-width: 650px) {
-
-      body {
-        padding: 20px 12px 50px;
-      }
-
-      .admin-header {
-        align-items: flex-start;
-      }
-
-      .admin-header h1 {
-        font-size: 23px;
-      }
-
-      .two-column,
       .theme-grid {
         grid-template-columns: 1fr;
       }
 
-      .panel {
-        padding: 17px;
+      .profile-preview {
+        align-items: flex-start;
       }
 
+      .save-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <main class="admin-page">
+<div class="container">
 
-    <header class="admin-header">
-      <div>
-        <h1>⚙️ Admin Nendar</h1>
-        <p>Kelola halaman Link in Bio</p>
-      </div>
+  <h1>⚙️ Admin Dashboard</h1>
+  <div class="subtitle">Kelola halaman Nendar tanpa mengedit kode.</div>
 
-      <button
-        class="logout-btn"
-        id="logoutBtn"
-        type="button"
+  <!-- ========================= -->
+  <!-- PROFILE -->
+  <!-- ========================= -->
+
+  <section class="card">
+
+    <h2>👤 Profil</h2>
+
+    <div class="profile-preview">
+
+      <img
+        id="profilePreview"
+        src="profile.png"
+        alt="Preview foto profil"
       >
-        Logout
-      </button>
-    </header>
 
+      <div class="profile-preview-info">
 
-    <!-- PROFILE -->
-
-    <section class="panel">
-
-      <h2>👤 Profile</h2>
-
-      <div class="profile-preview">
-        <img
-          id="profileAvatarPreview"
-          src="profile.png"
-          alt="Preview profile"
-        >
-
-        <div>
-          <strong id="profilePreviewName">
-            Nendar
-          </strong>
-
-          <span>
-            Preview informasi profile
-          </span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="profileName">
-          Nama
+        <label class="upload-label">
+          📷 Ganti Foto Profil
+          <input
+            type="file"
+            id="profileImage"
+            accept="image/*"
+          >
         </label>
 
-        <input
-          id="profileName"
-          type="text"
-          placeholder="Nendar"
+        <div style="margin-top:10px;color:#94a3b8;font-size:13px;">
+          JPG, PNG atau WEBP
+        </div>
+
+        <button
+          type="button"
+          class="btn-danger"
+          id="deleteProfileImage"
+          style="margin-top:10px;"
         >
-      </div>
-
-      <div class="field">
-        <label for="profileSubtitle">
-          Subtitle
-        </label>
-
-        <input
-          id="profileSubtitle"
-          type="text"
-          placeholder="Gaming • Creator"
-        >
-      </div>
-
-      <div class="field">
-        <label for="profileBio">
-          Bio / Pesan
-        </label>
-
-        <textarea
-          id="profileBio"
-          placeholder="Terima kasih sudah berkunjung!"
-        ></textarea>
-      </div>
-
-      <div class="field">
-        <label for="profileAvatarUrl">
-          URL Foto Profil
-        </label>
-
-        <input
-          id="profileAvatarUrl"
-          type="text"
-          placeholder="profile.png"
-        >
-      </div>
-
-    </section>
-
-
-    <!-- LINKS -->
-
-    <section class="panel">
-
-      <h2>🔗 Link Utama</h2>
-
-      <div id="linksContainer">
-        <div class="loading">
-          Memuat link...
-        </div>
-      </div>
-
-    </section>
-
-
-    <!-- THEME -->
-
-    <section class="panel">
-
-      <h2>🎨 Tema</h2>
-
-      <div class="theme-grid">
-
-        <div class="field">
-          <label for="backgroundType">
-            Background
-          </label>
-
-          <select id="backgroundType">
-
-            <option value="aurora">
-              Aurora
-            </option>
-
-            <option value="gradient">
-              Gradient
-            </option>
-
-          </select>
-        </div>
-
-
-        <div class="field">
-          <label for="cardStyle">
-            Card Style
-          </label>
-
-          <select id="cardStyle">
-
-            <option value="glass">
-              Glass
-            </option>
-
-            <option value="solid">
-              Solid
-            </option>
-
-          </select>
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Primary Color
-          </label>
-
-          <div class="color-row">
-
-            <input
-              id="primaryColor"
-              type="color"
-              value="#3b82f6"
-            >
-
-            <input
-              id="primaryColorText"
-              type="text"
-              value="#3b82f6"
-            >
-
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Secondary Color
-          </label>
-
-          <div class="color-row">
-
-            <input
-              id="secondaryColor"
-              type="color"
-              value="#8b5cf6"
-            >
-
-            <input
-              id="secondaryColorText"
-              type="text"
-              value="#8b5cf6"
-            >
-
-          </div>
-
-        </div>
+          Hapus Foto
+        </button>
 
       </div>
-
-
-      <div class="switch-row">
-
-        <div>
-          <strong>Mode Gelap</strong>
-
-          <div style="color:#94a3b8;font-size:13px;margin-top:3px;">
-            Gunakan tampilan dark mode sebagai default
-          </div>
-        </div>
-
-        <input
-          id="darkMode"
-          type="checkbox"
-          checked
-        >
-
-      </div>
-
-    </section>
-
-
-    <!-- SAVE -->
-
-    <div class="save-area">
-
-      <button
-        class="save-btn"
-        id="saveBtn"
-        type="button"
-      >
-        💾 Simpan Semua Perubahan
-      </button>
-
-      <div
-        class="message"
-        id="message"
-      ></div>
 
     </div>
 
-  </main>
+    <label>Nama</label>
+    <input
+      type="text"
+      id="profileName"
+      placeholder="Nendar"
+    >
+
+    <label>Subtitle</label>
+    <input
+      type="text"
+      id="profileSubtitle"
+      placeholder="Gaming • Creator"
+    >
+
+    <label>Bio</label>
+    <textarea
+      id="profileBio"
+      placeholder="Terima kasih sudah berkunjung!"
+    ></textarea>
+
+  </section>
 
 
-  <!-- SUPABASE -->
+  <!-- ========================= -->
+  <!-- LINKS -->
+  <!-- ========================= -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <section class="card">
 
+    <h2>🔗 Link Utama</h2>
 
-  <script>
+    <div id="linksContainer">
+      Memuat link...
+    </div>
 
-    /* =====================================================
-       SUPABASE CONFIG
-       ===================================================== */
+    <button
+      type="button"
+      class="btn-secondary"
+      id="addLink"
+    >
+      ＋ Tambah Link
+    </button>
 
-    const SUPABASE_URL =
-      "https://arcnrdjnlxcauhiplgfr.supabase.co";
-
-    const SUPABASE_KEY =
-      "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
-
-
-    const supabaseClient =
-      supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+  </section>
 
 
-    /* =====================================================
-       STATE
-       ===================================================== */
+  <!-- ========================= -->
+  <!-- THEME -->
+  <!-- ========================= -->
 
-    let links = [];
+  <section class="card">
 
-    let profile = null;
+    <h2>🎨 Tema</h2>
 
-    let theme = null;
+    <div class="theme-grid">
+
+      <div>
+        <label>Background</label>
+
+        <select id="backgroundType">
+          <option value="aurora">Aurora</option>
+          <option value="gradient">Gradient</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Gaya Kartu</label>
+
+        <select id="cardStyle">
+          <option value="glass">Glass</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Warna Utama</label>
+
+        <input
+          type="color"
+          id="primaryColor"
+        >
+      </div>
+
+      <div>
+        <label>Warna Sekunder</label>
+
+        <input
+          type="color"
+          id="secondaryColor"
+        >
+      </div>
+
+    </div>
+
+  </section>
 
 
-    /* =====================================================
-       ELEMENTS
-       ===================================================== */
+  <!-- ========================= -->
+  <!-- SAVE -->
+  <!-- ========================= -->
 
-    const linksContainer =
-      document.getElementById(
-        "linksContainer"
-      );
+  <div class="save-bar">
 
-    const saveBtn =
-      document.getElementById(
-        "saveBtn"
-      );
+    <div
+      class="status"
+      id="status"
+    >
+      Siap.
+    </div>
 
-    const message =
-      document.getElementById(
-        "message"
-      );
+    <div class="actions">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        id="logout"
+      >
+        Logout
+      </button>
+
+      <button
+        type="button"
+        class="btn-success"
+        id="saveAll"
+      >
+        💾 Simpan Semua
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
-    /* =====================================================
-       INIT
-       ===================================================== */
+<script>
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      init
+const SUPABASE_URL =
+  "https://arcnrdjnlxcauhiplgfr.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
+
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let linksData = [];
+let profileData = null;
+let themeData = null;
+
+
+/* =========================================
+   INIT
+========================================= */
+
+async function init() {
+
+  const {
+    data: {
+      session
+    }
+  } = await supabaseClient.auth.getSession();
+
+
+  if (!session) {
+    window.location.href = "admin.html";
+    return;
+  }
+
+
+  await loadProfile();
+  await loadLinks();
+  await loadTheme();
+
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+async function loadProfile() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(error);
+
+    setStatus(
+      "Gagal memuat profil."
     );
 
+    return;
+  }
 
-    async function init() {
+
+  profileData = data;
+
+
+  if (!data) {
+    return;
+  }
+
+
+  document.getElementById(
+    "profileName"
+  ).value = data.name || "";
+
+
+  document.getElementById(
+    "profileSubtitle"
+  ).value = data.subtitle || "";
+
+
+  document.getElementById(
+    "profileBio"
+  ).value = data.bio || "";
+
+
+  if (data.avatar_url) {
+
+    document.getElementById(
+      "profilePreview"
+    ).src = data.avatar_url;
+
+  }
+
+}
+
+
+/* =========================================
+   PROFILE IMAGE
+========================================= */
+
+document
+  .getElementById("profileImage")
+  .addEventListener(
+    "change",
+    async function () {
+
+      const file = this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+
+      setStatus(
+        "Mengupload foto profil..."
+      );
+
+
+      const extension =
+        file.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      const fileName =
+        "profile/profile-" +
+        Date.now() +
+        "." +
+        extension;
+
 
       const {
-        data: {
-          session
-        }
-      } =
-        await supabaseClient
-          .auth
-          .getSession();
+        error: uploadError
+      } = await supabaseClient
+        .storage
+        .from("link-thumbnails")
+        .upload(
+          fileName,
+          file,
+          {
+            upsert: true
+          }
+        );
 
 
-      if (!session) {
+      if (uploadError) {
 
-        window.location.href =
-          "admin.html";
+        console.error(
+          uploadError
+        );
+
+        setStatus(
+          "Upload foto gagal."
+        );
 
         return;
+      }
+
+
+      const {
+        data
+      } =
+        supabaseClient
+          .storage
+          .from("link-thumbnails")
+          .getPublicUrl(
+            fileName
+          );
+
+
+      document.getElementById(
+        "profilePreview"
+      ).src =
+        data.publicUrl;
+
+
+      if (profileData) {
+
+        profileData.avatar_url =
+          data.publicUrl;
 
       }
 
 
-      await loadData();
-
-    }
-
-
-    /* =====================================================
-       LOAD DATA
-       ===================================================== */
-
-    async function loadData() {
-
-      setMessage(
-        "Memuat data...",
-        "loading"
+      setStatus(
+        "Foto profil siap disimpan."
       );
 
-
-      try {
-
-        const [
-          profileResult,
-          linksResult,
-          themeResult
-        ] = await Promise.all([
-
-          supabaseClient
-            .from("profiles")
-            .select("*")
-            .limit(1)
-            .maybeSingle(),
-
-          supabaseClient
-            .from("links")
-            .select("*")
-            .order(
-              "sort_order",
-              {
-                ascending: true
-              }
-            ),
-
-          supabaseClient
-            .from("themes")
-            .select("*")
-            .limit(1)
-            .maybeSingle()
-
-        ]);
-
-
-        if (profileResult.error) {
-          throw profileResult.error;
-        }
-
-        if (linksResult.error) {
-          throw linksResult.error;
-        }
-
-        if (themeResult.error) {
-          throw themeResult.error;
-        }
-
-
-        profile =
-          profileResult.data;
-
-
-        links =
-          linksResult.data || [];
-
-
-        theme =
-          themeResult.data;
-
-
-        fillProfile();
-
-        renderLinks();
-
-        fillTheme();
-
-
-        setMessage(
-          "",
-          ""
-        );
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        setMessage(
-          "Gagal memuat data: " +
-          error.message,
-          "error"
-        );
-
-      }
-
     }
+  );
 
 
-    /* =====================================================
-       PROFILE
-       ===================================================== */
+/* =========================================
+   DELETE PROFILE IMAGE
+========================================= */
 
-    function fillProfile() {
+document
+  .getElementById(
+    "deleteProfileImage"
+  )
+  .addEventListener(
+    "click",
+    function () {
 
-      if (!profile) {
+      if (!profileData) {
         return;
       }
 
 
-      document.getElementById(
-        "profileName"
-      ).value =
-        profile.name || "";
+      profileData.avatar_url =
+        null;
 
 
       document.getElementById(
-        "profileSubtitle"
-      ).value =
-        profile.subtitle || "";
-
-
-      document.getElementById(
-        "profileBio"
-      ).value =
-        profile.bio || "";
-
-
-      document.getElementById(
-        "profileAvatarUrl"
-      ).value =
-        profile.avatar_url || "profile.png";
-
-
-      document.getElementById(
-        "profilePreviewName"
-      ).textContent =
-        profile.name || "Nendar";
-
-
-      document.getElementById(
-        "profileAvatarPreview"
+        "profilePreview"
       ).src =
-        profile.avatar_url ||
         "profile.png";
 
+
+      setStatus(
+        "Foto profil akan dihapus saat disimpan."
+      );
+
     }
+  );
 
 
-    /* =====================================================
-       RENDER LINKS
-       ===================================================== */
+/* =========================================
+   LINKS
+========================================= */
 
-    function renderLinks() {
+async function loadLinks() {
 
-      linksContainer.innerHTML = "";
-
-
-      if (!links.length) {
-
-        linksContainer.innerHTML = `
-          <p style="color:#94a3b8;">
-            Belum ada link.
-          </p>
-        `;
-
-        return;
-
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("links")
+    .select("*")
+    .order(
+      "sort_order",
+      {
+        ascending: true
       }
+    );
 
 
-      links.forEach(
-        (link, index) => {
+  if (error) {
 
-          const item =
-            document.createElement(
-              "div"
-            );
+    console.error(error);
 
-          item.className =
-            "link-item";
+    document.getElementById(
+      "linksContainer"
+    ).innerHTML =
+      "Gagal memuat link.";
 
-
-          item.dataset.id =
-            link.id;
+    return;
+  }
 
 
-          const mediaType =
-            link.media_type ||
-            "icon";
+  linksData = data || [];
+
+  renderLinks();
+
+}
 
 
-          item.innerHTML = `
+/* =========================================
+   RENDER LINKS
+========================================= */
 
-            <div class="link-header">
+function renderLinks() {
 
-              <div class="link-number">
-                LINK ${index + 1}
-              </div>
-
-              <label class="link-status">
-
-                <input
-                  type="checkbox"
-                  class="active-input"
-                  ${link.is_active ? "checked" : ""}
-                >
-
-                Aktif
-
-              </label>
-
-            </div>
+  const container =
+    document.getElementById(
+      "linksContainer"
+    );
 
 
-            <div class="two-column">
+  if (!linksData.length) {
 
-              <div class="field">
+    container.innerHTML =
+      "<p style='color:#94a3b8;'>Belum ada link.</p>";
 
-                <label>
-                  Judul
-                </label>
-
-                <input
-                  type="text"
-                  class="title-input"
-                  value="${escapeHtml(link.title || "")}"
-                  placeholder="Judul link"
-                >
-
-              </div>
+    return;
+  }
 
 
-              <div class="field">
-
-                <label>
-                  Urutan
-                </label>
-
-                <input
-                  type="number"
-                  class="order-input"
-                  value="${Number(link.sort_order || 0)}"
-                >
-
-              </div>
-
-            </div>
+  container.innerHTML = "";
 
 
-            <div class="field">
+  linksData.forEach(
+    (link, index) => {
 
-              <label>
-                Deskripsi
-              </label>
+      const item =
+        document.createElement(
+          "div"
+        );
 
-              <input
-                type="text"
-                class="description-input"
-                value="${escapeHtml(link.description || "")}"
-                placeholder="Deskripsi singkat"
+      item.className =
+        "link-item";
+
+
+      item.innerHTML = `
+
+        <div class="link-header">
+
+          <div class="link-number">
+            Link ${index + 1}
+          </div>
+
+          <button
+            type="button"
+            class="btn-danger"
+            onclick="deleteLink(${index})"
+          >
+            Hapus
+          </button>
+
+        </div>
+
+
+        <div class="icon-preview-area">
+
+          ${
+            link.icon_url
+              ?
+              `
+              <img
+                id="iconPreview-${index}"
+                class="icon-preview"
+                src="${escapeHtml(link.icon_url)}"
               >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                URL
-              </label>
-
-              <input
-                type="url"
-                class="url-input"
-                value="${escapeHtml(link.url || "")}"
-                placeholder="https://..."
+              `
+              :
+              `
+              <div
+                id="iconPreview-${index}"
+                class="icon-placeholder"
               >
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Tampilan Link
-              </label>
-
-
-              <div class="media-options">
-
-                <div class="media-option">
-
-                  <input
-                    type="radio"
-                    id="icon-${link.id}"
-                    name="media-${link.id}"
-                    value="icon"
-                    ${mediaType === "icon" ? "checked" : ""}
-                  >
-
-                  <label for="icon-${link.id}">
-                    😀 Icon
-                  </label>
-
-                </div>
-
-
-                <div class="media-option">
-
-                  <input
-                    type="radio"
-                    id="thumbnail-${link.id}"
-                    name="media-${link.id}"
-                    value="thumbnail"
-                    ${mediaType === "thumbnail" ? "checked" : ""}
-                  >
-
-                  <label for="thumbnail-${link.id}">
-                    🖼️ Thumbnail
-                  </label>
-
-                </div>
-
+                ${link.icon || "🔗"}
               </div>
-
-            </div>
-
-
-            <div
-              class="icon-area"
-              style="${mediaType === "icon" ? "" : "display:none;"}"
-            >
-
-              <div class="field">
-
-                <label>
-                  Icon
-                </label>
-
-                <div class="icon-box">
-
-                  <div class="icon-preview">
-                    ${escapeHtml(link.icon || "🔗")}
-                  </div>
-
-                  <input
-                    type="text"
-                    class="icon-input"
-                    value="${escapeHtml(link.icon || "🔗")}"
-                    placeholder="🎮"
-                    maxlength="10"
-                  >
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div
-              class="thumbnail-area ${mediaType === "thumbnail" ? "active" : ""}"
-            >
-
-              <div class="field">
-
-                <label>
-                  Thumbnail
-                </label>
-
-
-                <img
-                  class="thumbnail-preview"
-                  src="${escapeHtml(link.thumbnail_url || placeholderImage())}"
-                  alt="Thumbnail"
-                  onerror="this.src='${placeholderImage()}'"
-                >
-
-
-                <div class="upload-row">
-
-                  <input
-                    type="file"
-                    class="file-input"
-                    accept="image/png,image/jpeg,image/webp"
-                  >
-
-                  <button
-                    type="button"
-                    class="small-btn upload-btn"
-                  >
-                    🖼️ Pilih Gambar
-                  </button>
-
-                  <button
-                    type="button"
-                    class="small-btn delete-thumb"
-                  >
-                    🗑️ Hapus
-                  </button>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          `;
-
-
-          linksContainer.appendChild(
-            item
-          );
-
-
-          setupLinkEvents(
-            item,
-            link
-          );
-
-        }
-      );
-
-    }
-
-
-    /* =====================================================
-       LINK EVENTS
-       ===================================================== */
-
-    function setupLinkEvents(
-      item,
-      link
-    ) {
-
-      const iconRadios =
-        item.querySelectorAll(
-          `input[name="media-${link.id}"]`
-        );
-
-
-      const iconArea =
-        item.querySelector(
-          ".icon-area"
-        );
-
-
-      const thumbnailArea =
-        item.querySelector(
-          ".thumbnail-area"
-        );
-
-
-      iconRadios.forEach(
-        radio => {
-
-          radio.addEventListener(
-            "change",
-            () => {
-
-              if (
-                radio.value ===
-                "thumbnail"
-              ) {
-
-                iconArea.style.display =
-                  "none";
-
-                thumbnailArea.classList
-                  .add("active");
-
-              } else {
-
-                iconArea.style.display =
-                  "";
-
-                thumbnailArea.classList
-                  .remove("active");
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-
-      const iconInput =
-        item.querySelector(
-          ".icon-input"
-        );
-
-
-      const iconPreview =
-        item.querySelector(
-          ".icon-preview"
-        );
-
-
-      iconInput.addEventListener(
-        "input",
-        () => {
-
-          iconPreview.textContent =
-            iconInput.value ||
-            "🔗";
-
-        }
-      );
-
-
-      const fileInput =
-        item.querySelector(
-          ".file-input"
-        );
-
-
-      const uploadBtn =
-        item.querySelector(
-          ".upload-btn"
-        );
-
-
-      const thumbnailPreview =
-        item.querySelector(
-          ".thumbnail-preview"
-        );
-
-
-      uploadBtn.addEventListener(
-        "click",
-        () => {
-
-          fileInput.click();
-
-        }
-      );
-
-
-      fileInput.addEventListener(
-        "change",
-        () => {
-
-          const file =
-            fileInput.files[0];
-
-
-          if (!file) {
-            return;
+              `
           }
 
 
-          /*
-           * Preview lokal terlebih dahulu.
-           */
+          <div class="icon-upload">
 
-          const localUrl =
-            URL.createObjectURL(
-              file
-            );
+            <label class="upload-label">
 
+              🖼️ Upload Icon
 
-          thumbnailPreview.src =
-            localUrl;
+              <input
+                type="file"
+                accept="image/*"
+                onchange="uploadLinkIcon(${index}, this)"
+              >
 
-        }
-      );
+            </label>
 
 
-      const deleteBtn =
-        item.querySelector(
-          ".delete-thumb"
-        );
+            ${
+              link.icon_url
+                ?
+                `
+                <button
+                  type="button"
+                  class="btn-danger"
+                  style="margin-left:8px;"
+                  onclick="deleteLinkIcon(${index})"
+                >
+                  Hapus Icon
+                </button>
+                `
+                :
+                ""
+            }
+
+            <div
+              style="
+                margin-top:8px;
+                color:#94a3b8;
+                font-size:12px;
+              "
+            >
+              Icon gambar untuk kartu link.
+            </div>
+
+          </div>
+
+        </div>
 
 
-      deleteBtn.addEventListener(
-        "click",
-        () => {
+        <label>Judul Link</label>
 
-          link.thumbnail_url =
-            null;
+        <input
+          type="text"
+          value="${escapeAttribute(link.title || "")}"
+          oninput="linksData[${index}].title=this.value"
+        >
 
-          fileInput.value =
-            "";
 
-          thumbnailPreview.src =
-            placeholderImage();
+        <label>Deskripsi</label>
 
-        }
+        <input
+          type="text"
+          value="${escapeAttribute(link.description || "")}"
+          oninput="linksData[${index}].description=this.value"
+        >
+
+
+        <label>URL</label>
+
+        <input
+          type="url"
+          value="${escapeAttribute(link.url || "")}"
+          placeholder="https://..."
+          oninput="linksData[${index}].url=this.value"
+        >
+
+
+        <label>Emoji fallback</label>
+
+        <input
+          type="text"
+          value="${escapeAttribute(link.icon || "🔗")}"
+          oninput="linksData[${index}].icon=this.value"
+        >
+
+
+        <label>Urutan</label>
+
+        <input
+          type="number"
+          value="${link.sort_order ?? index + 1}"
+          oninput="linksData[${index}].sort_order=Number(this.value)"
+        >
+
+
+        <div class="checkbox-row">
+
+          <input
+            type="checkbox"
+            ${link.is_active ? "checked" : ""}
+            onchange="linksData[${index}].is_active=this.checked"
+          >
+
+          <span>
+            Tampilkan link ini
+          </span>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        item
       );
 
     }
+  );
+
+}
 
 
-    /* =====================================================
-       THEME
-       ===================================================== */
+/* =========================================
+   UPLOAD LINK ICON
+========================================= */
 
-    function fillTheme() {
+async function uploadLinkIcon(
+  index,
+  input
+) {
 
-      if (!theme) {
-        return;
+  const file =
+    input.files[0];
+
+
+  if (!file) {
+    return;
+  }
+
+
+  setStatus(
+    "Mengupload icon..."
+  );
+
+
+  const extension =
+    file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+
+  const fileName =
+    "icons/icon-" +
+    Date.now() +
+    "-" +
+    index +
+    "." +
+    extension;
+
+
+  const {
+    error
+  } = await supabaseClient
+    .storage
+    .from("link-thumbnails")
+    .upload(
+      fileName,
+      file,
+      {
+        upsert: true
       }
+    );
 
 
-      document.getElementById(
-        "backgroundType"
-      ).value =
-        theme.background_type ||
-        "aurora";
+  if (error) {
+
+    console.error(error);
+
+    setStatus(
+      "Upload icon gagal."
+    );
+
+    return;
+  }
 
 
-      document.getElementById(
-        "cardStyle"
-      ).value =
-        theme.card_style ||
-        "glass";
-
-
-      setColor(
-        "primaryColor",
-        "primaryColorText",
-        theme.primary_color ||
-        "#3b82f6"
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from("link-thumbnails")
+      .getPublicUrl(
+        fileName
       );
 
 
-      setColor(
-        "secondaryColor",
-        "secondaryColorText",
-        theme.secondary_color ||
-        "#8b5cf6"
-      );
+  linksData[index].icon_url =
+    data.publicUrl;
 
 
-      document.getElementById(
-        "darkMode"
-      ).checked =
-        theme.dark_mode !== false;
+  renderLinks();
+
+
+  setStatus(
+    "Icon siap disimpan."
+  );
+
+}
+
+
+/* =========================================
+   DELETE LINK ICON
+========================================= */
+
+function deleteLinkIcon(index) {
+
+  linksData[index].icon_url =
+    null;
+
+
+  renderLinks();
+
+
+  setStatus(
+    "Icon akan dihapus saat disimpan."
+  );
+
+}
+
+
+/* =========================================
+   ADD LINK
+========================================= */
+
+document
+  .getElementById("addLink")
+  .addEventListener(
+    "click",
+    function () {
+
+      linksData.push({
+
+        title:
+          "Link Baru",
+
+        description:
+          "",
+
+        url:
+          "#",
+
+        icon:
+          "🔗",
+
+        icon_url:
+          null,
+
+        sort_order:
+          linksData.length + 1,
+
+        is_active:
+          true
+
+      });
+
+
+      renderLinks();
 
     }
+  );
 
 
-    function setColor(
-      colorId,
-      textId,
-      value
-    ) {
+/* =========================================
+   DELETE LINK
+========================================= */
 
-      document.getElementById(
-        colorId
-      ).value =
-        value;
+function deleteLink(index) {
+
+  const link =
+    linksData[index];
 
 
-      document.getElementById(
-        textId
-      ).value =
-        value;
+  if (
+    !confirm(
+      `Hapus link "${link.title}"?`
+    )
+  ) {
 
-    }
+    return;
+
+  }
 
 
-    document.getElementById(
-      "primaryColor"
-    ).addEventListener(
-      "input",
-      e => {
+  linksData.splice(
+    index,
+    1
+  );
 
+
+  renderLinks();
+
+}
+
+
+/* =========================================
+   THEME
+========================================= */
+
+async function loadTheme() {
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("themes")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+  }
+
+
+  themeData = data;
+
+
+  if (!data) {
+    return;
+  }
+
+
+  document.getElementById(
+    "backgroundType"
+  ).value =
+    data.background_type ||
+    "aurora";
+
+
+  document.getElementById(
+    "cardStyle"
+  ).value =
+    data.card_style ||
+    "glass";
+
+
+  document.getElementById(
+    "primaryColor"
+  ).value =
+    data.primary_color ||
+    "#3b82f6";
+
+
+  document.getElementById(
+    "secondaryColor"
+  ).value =
+    data.secondary_color ||
+    "#8b5cf6";
+
+}
+
+
+/* =========================================
+   SAVE ALL
+========================================= */
+
+document
+  .getElementById("saveAll")
+  .addEventListener(
+    "click",
+    saveAll
+  );
+
+
+async function saveAll() {
+
+  setStatus(
+    "Menyimpan..."
+  );
+
+
+  try {
+
+    /* PROFILE */
+
+    const profileUpdate = {
+
+      name:
         document.getElementById(
-          "primaryColorText"
-        ).value =
-          e.target.value;
+          "profileName"
+        ).value.trim(),
 
-      }
-    );
-
-
-    document.getElementById(
-      "primaryColorText"
-    ).addEventListener(
-      "input",
-      e => {
-
-        if (
-          /^#[0-9A-Fa-f]{6}$/
-            .test(e.target.value)
-        ) {
-
-          document.getElementById(
-            "primaryColor"
-          ).value =
-            e.target.value;
-
-        }
-
-      }
-    );
-
-
-    document.getElementById(
-      "secondaryColor"
-    ).addEventListener(
-      "input",
-      e => {
-
+      subtitle:
         document.getElementById(
-          "secondaryColorText"
-        ).value =
-          e.target.value;
+          "profileSubtitle"
+        ).value.trim(),
 
-      }
-    );
+      bio:
+        document.getElementById(
+          "profileBio"
+        ).value.trim(),
 
+      avatar_url:
+        profileData
+          ? profileData.avatar_url
+          : null,
 
-    document.getElementById(
-      "secondaryColorText"
-    ).addEventListener(
-      "input",
-      e => {
+      updated_at:
+        new Date().toISOString()
 
-        if (
-          /^#[0-9A-Fa-f]{6}$/
-            .test(e.target.value)
-        ) {
-
-          document.getElementById(
-            "secondaryColor"
-          ).value =
-            e.target.value;
-
-        }
-
-      }
-    );
+    };
 
 
-    /* =====================================================
-       SAVE EVERYTHING
-       ===================================================== */
+    if (profileData?.id) {
 
-    saveBtn.addEventListener(
-      "click",
-      saveAll
-    );
-
-
-    async function saveAll() {
-
-      saveBtn.disabled = true;
-
-      saveBtn.textContent =
-        "⏳ Menyimpan...";
-
-
-      setMessage(
-        "Menyimpan perubahan...",
-        "loading"
-      );
-
-
-      try {
-
-        /*
-         * PROFILE
-         */
-
-        const profileData = {
-
-          name:
-            document.getElementById(
-              "profileName"
-            ).value.trim(),
-
-          subtitle:
-            document.getElementById(
-              "profileSubtitle"
-            ).value.trim(),
-
-          bio:
-            document.getElementById(
-              "profileBio"
-            ).value.trim(),
-
-          avatar_url:
-            document.getElementById(
-              "profileAvatarUrl"
-            ).value.trim(),
-
-          updated_at:
-            new Date().toISOString()
-
-        };
-
-
-        if (!profile) {
-
-          throw new Error(
-            "Data profile tidak ditemukan."
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .update(
+            profileUpdate
+          )
+          .eq(
+            "id",
+            profileData.id
           );
 
-        }
 
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /* LINKS */
+
+    for (
+      const link of linksData
+    ) {
+
+      if (link.id) {
 
         const {
-          error:
-            profileError
+          error
         } =
           await supabaseClient
-            .from("profiles")
-            .update(profileData)
+            .from("links")
+            .update({
+
+              title:
+                link.title,
+
+              description:
+                link.description,
+
+              url:
+                link.url,
+
+              icon:
+                link.icon,
+
+              icon_url:
+                link.icon_url,
+
+              sort_order:
+                link.sort_order,
+
+              is_active:
+                link.is_active,
+
+              updated_at:
+                new Date().toISOString()
+
+            })
             .eq(
               "id",
-              profile.id
+              link.id
             );
 
 
-        if (profileError) {
-          throw profileError;
+        if (error) {
+          throw error;
         }
 
+      } else {
 
-        /*
-         * LINKS
-         */
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("links")
+            .insert({
 
-        const items =
-          linksContainer.querySelectorAll(
-            ".link-item"
-          );
+              title:
+                link.title,
 
+              description:
+                link.description,
 
-        for (
-          const item of items
-        ) {
+              url:
+                link.url,
 
-          const id =
-            Number(
-              item.dataset.id
-            );
+              icon:
+                link.icon,
 
+              icon_url:
+                link.icon_url,
 
-          const originalLink =
-            links.find(
-              l => Number(l.id) === id
-            );
+              sort_order:
+                link.sort_order,
 
+              is_active:
+                link.is_active
 
-          if (!originalLink) {
-            continue;
-          }
-
-
-          const mediaType =
-            item.querySelector(
-              `input[name="media-${id}"]:checked`
-            )?.value ||
-            "icon";
+            });
 
 
-          const title =
-            item.querySelector(
-              ".title-input"
-            ).value.trim();
+        if (error) {
+          throw error;
+        }
+
+      }
+
+    }
 
 
-          const description =
-            item.querySelector(
-              ".description-input"
-            ).value.trim();
+    /* THEME */
 
+    if (themeData?.id) {
 
-          const url =
-            item.querySelector(
-              ".url-input"
-            ).value.trim();
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("themes")
+          .update({
 
+            background_type:
+              document.getElementById(
+                "backgroundType"
+              ).value,
 
-          const icon =
-            item.querySelector(
-              ".icon-input"
-            ).value.trim();
+            primary_color:
+              document.getElementById(
+                "primaryColor"
+              ).value,
 
+            secondary_color:
+              document.getElementById(
+                "secondaryColor"
+              ).value,
 
-          const sortOrder =
-            Number(
-              item.querySelector(
-                ".order-input"
-              ).value
-            ) || 0;
-
-
-          const isActive =
-            item.querySelector(
-              ".active-input"
-            ).checked;
-
-
-          const file =
-            item.querySelector(
-              ".file-input"
-            ).files[0];
-
-
-          let thumbnailUrl =
-            originalLink.thumbnail_url ||
-            null;
-
-
-          /*
-           * UPLOAD THUMBNAIL
-           */
-
-          if (file) {
-
-            validateImage(
-              file
-            );
-
-
-            const extension =
-              getExtension(
-                file.name
-              );
-
-
-            const fileName =
-              `${id}-${Date.now()}.${extension}`;
-
-
-            const filePath =
-              `links/${fileName}`;
-
-
-            const {
-              error:
-                uploadError
-            } =
-              await supabaseClient
-                .storage
-                .from(
-                  "link-thumbnails"
-                )
-                .upload(
-                  filePath,
-                  file,
-                  {
-                    cacheControl:
-                      "3600",
-                    upsert: false
-                  }
-                );
-
-
-            if (uploadError) {
-              throw uploadError;
-            }
-
-
-            const {
-              data:
-                publicData
-            } =
-              supabaseClient
-                .storage
-                .from(
-                  "link-thumbnails"
-                )
-                .getPublicUrl(
-                  filePath
-                );
-
-
-            thumbnailUrl =
-              publicData.publicUrl;
-
-          }
-
-
-          /*
-           * UPDATE LINK
-           */
-
-          const linkData = {
-
-            title,
-
-            description,
-
-            url,
-
-            icon,
-
-            sort_order:
-              sortOrder,
-
-            is_active:
-              isActive,
-
-            media_type:
-              mediaType,
-
-            thumbnail_url:
-              thumbnailUrl,
+            card_style:
+              document.getElementById(
+                "cardStyle"
+              ).value,
 
             updated_at:
               new Date().toISOString()
 
-          };
+          })
+          .eq(
+            "id",
+            themeData.id
+          );
 
 
-          const {
-            error:
-              linkError
-          } =
-            await supabaseClient
-              .from("links")
-              .update(linkData)
-              .eq(
-                "id",
-                id
-              );
-
-
-          if (linkError) {
-            throw linkError;
-          }
-
-        }
-
-
-        /*
-         * THEME
-         */
-
-        const themeData = {
-
-          background_type:
-            document.getElementById(
-              "backgroundType"
-            ).value,
-
-          primary_color:
-            document.getElementById(
-              "primaryColorText"
-            ).value,
-
-          secondary_color:
-            document.getElementById(
-              "secondaryColorText"
-            ).value,
-
-          card_style:
-            document.getElementById(
-              "cardStyle"
-            ).value,
-
-          dark_mode:
-            document.getElementById(
-              "darkMode"
-            ).checked,
-
-          updated_at:
-            new Date().toISOString()
-
-        };
-
-
-        if (theme) {
-
-          const {
-            error:
-              themeError
-          } =
-            await supabaseClient
-              .from("themes")
-              .update(themeData)
-              .eq(
-                "id",
-                theme.id
-              );
-
-
-          if (themeError) {
-            throw themeError;
-          }
-
-        }
-
-
-        /*
-         * SELESAI
-         */
-
-        setMessage(
-          "✅ Semua perubahan berhasil disimpan.",
-          "success"
-        );
-
-
-        await loadData();
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        setMessage(
-          "❌ Gagal menyimpan: " +
-          error.message,
-          "error"
-        );
-
-      } finally {
-
-        saveBtn.disabled = false;
-
-        saveBtn.textContent =
-          "💾 Simpan Semua Perubahan";
-
+      if (error) {
+        throw error;
       }
 
     }
 
 
-    /* =====================================================
-       LOGOUT
-       ===================================================== */
-
-    document.getElementById(
-      "logoutBtn"
-    ).addEventListener(
-      "click",
-      async () => {
-
-        await supabaseClient
-          .auth
-          .signOut();
+    await loadProfile();
+    await loadLinks();
+    await loadTheme();
 
 
-        window.location.href =
-          "admin.html";
-
-      }
+    setStatus(
+      "✅ Semua perubahan berhasil disimpan."
     );
 
 
-    /* =====================================================
-       HELPERS
-       ===================================================== */
+  } catch (error) {
 
-    function setMessage(
-      text,
-      type
-    ) {
+    console.error(error);
 
-      message.textContent =
-        text;
+    setStatus(
+      "❌ Gagal menyimpan: " +
+      error.message
+    );
 
-      message.className =
-        "message " +
-        type;
+  }
 
-    }
+}
 
 
-    function escapeHtml(
-      value
-    ) {
+/* =========================================
+   LOGOUT
+========================================= */
 
-      return String(value)
-        .replaceAll(
-          "&",
-          "&amp;"
-        )
-        .replaceAll(
-          "<",
-          "&lt;"
-        )
-        .replaceAll(
-          ">",
-          "&gt;"
-        )
-        .replaceAll(
-          '"',
-          "&quot;"
-        )
-        .replaceAll(
-          "'",
-          "&#039;"
-        );
+document
+  .getElementById("logout")
+  .addEventListener(
+    "click",
+    async function () {
+
+      await supabaseClient
+        .auth
+        .signOut();
+
+      window.location.href =
+        "admin.html";
 
     }
+  );
 
 
-    function getExtension(
-      filename
-    ) {
+/* =========================================
+   HELPERS
+========================================= */
 
-      const parts =
-        filename
-          .split(".");
+function setStatus(text) {
 
+  document.getElementById(
+    "status"
+  ).textContent = text;
 
-      return (
-        parts[
-          parts.length - 1
-        ] || "png"
-      )
-        .toLowerCase();
-
-    }
+}
 
 
-    function validateImage(
-      file
-    ) {
+function escapeHtml(value) {
 
-      const allowed = [
-        "image/png",
-        "image/jpeg",
-        "image/webp"
-      ];
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
-
-      if (
-        !allowed.includes(
-          file.type
-        )
-      ) {
-
-        throw new Error(
-          "Thumbnail harus PNG, JPG/JPEG, atau WEBP."
-        );
-
-      }
+}
 
 
-      /*
-       * Maksimal 5 MB
-       */
+function escapeAttribute(value) {
 
-      if (
-        file.size >
-        5 * 1024 * 1024
-      ) {
+  return escapeHtml(value);
 
-        throw new Error(
-          "Ukuran thumbnail maksimal 5 MB."
-        );
-
-      }
-
-    }
+}
 
 
-    function placeholderImage() {
+init();
 
-      return (
-        "data:image/svg+xml," +
-        encodeURIComponent(`
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="600"
-            height="338"
-            viewBox="0 0 600 338"
-          >
-            <rect
-              width="600"
-              height="338"
-              fill="#111827"
-            />
-
-            <text
-              x="300"
-              y="180"
-              text-anchor="middle"
-              fill="#64748b"
-              font-size="32"
-              font-family="Arial"
-            >
-              No Thumbnail
-            </text>
-
-          </svg>
-        `)
-      );
-
-    }
-
-  </script>
+</script>
 
 </body>
 </html>
