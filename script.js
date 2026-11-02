@@ -2,8 +2,8 @@
 // SUPABASE CONFIG
 // ==========================================
 
-const SUPABASE_URL = "MASUKKAN_SUPABASE_URL";
-const SUPABASE_KEY = "MASUKKAN_SUPABASE_PUBLISHABLE_KEY";
+const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
 
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
@@ -12,8 +12,7 @@ const supabaseClient = supabase.createClient(
 
 
 // ==========================================
-// DEFAULT DATA
-// Dipakai jika database belum tersedia
+// DEFAULT PROFILE
 // ==========================================
 
 const defaultProfile = {
@@ -25,7 +24,7 @@ const defaultProfile = {
 
 
 // ==========================================
-// LOAD WEBSITE DATA
+// LOAD WEBSITE
 // ==========================================
 
 async function loadWebsiteData() {
@@ -57,7 +56,9 @@ async function loadWebsiteData() {
         .from("links")
         .select("*")
         .eq("is_active", true)
-        .order("sort_order", { ascending: true });
+        .order("sort_order", {
+          ascending: true
+        });
 
     if (linksError) {
       console.error("Links error:", linksError);
@@ -73,7 +74,9 @@ async function loadWebsiteData() {
         .from("socials")
         .select("*")
         .eq("is_active", true)
-        .order("sort_order", { ascending: true });
+        .order("sort_order", {
+          ascending: true
+        });
 
     if (socialsError) {
       console.error("Socials error:", socialsError);
@@ -97,33 +100,14 @@ async function loadWebsiteData() {
 
 
     // --------------------------------------
-    // APPLY PROFILE
+    // APPLY DATA
     // --------------------------------------
 
     applyProfile(profile || defaultProfile);
 
+    applyLinks(links || []);
 
-    // --------------------------------------
-    // APPLY LINKS
-    // --------------------------------------
-
-    if (links && links.length) {
-      applyLinks(links);
-    }
-
-
-    // --------------------------------------
-    // APPLY SOCIALS
-    // --------------------------------------
-
-    if (socials && socials.length) {
-      applySocials(socials);
-    }
-
-
-    // --------------------------------------
-    // APPLY THEME
-    // --------------------------------------
+    applySocials(socials || []);
 
     if (theme) {
       applyTheme(theme);
@@ -132,53 +116,72 @@ async function loadWebsiteData() {
   } catch (error) {
 
     console.error(
-      "Gagal mengambil data dari Supabase:",
+      "Gagal mengambil data Supabase:",
       error
     );
 
     applyProfile(defaultProfile);
-
   }
-
 }
 
 
 // ==========================================
-// PROFILE
+// APPLY PROFILE
 // ==========================================
 
 function applyProfile(profile) {
 
   const nameElement =
-    document.querySelector(".profile-name");
+    document.querySelector(".profile h1");
 
   const subtitleElement =
-    document.querySelector(".profile-subtitle");
+    document.querySelector(".profile .subtitle");
 
-  const bioElement =
-    document.querySelector(".profile-bio");
+  const welcomeElement =
+    document.querySelector(".profile .welcome");
 
   const avatarElement =
     document.querySelector(".avatar");
 
 
+  // Nama
+
   if (nameElement) {
+
     nameElement.textContent =
       profile.name || defaultProfile.name;
+
   }
 
+
+  // Subtitle
 
   if (subtitleElement) {
-    subtitleElement.textContent =
-      profile.subtitle || defaultProfile.subtitle;
+
+    subtitleElement.innerHTML =
+      escapeHtml(
+        profile.subtitle ||
+        defaultProfile.subtitle
+      ).replace(
+        " • ",
+        " <span>•</span> "
+      );
+
   }
 
 
-  if (bioElement) {
-    bioElement.textContent =
-      profile.bio || defaultProfile.bio;
+  // Bio
+
+  if (welcomeElement) {
+
+    welcomeElement.textContent =
+      profile.bio ||
+      defaultProfile.bio;
+
   }
 
+
+  // Foto
 
   if (
     avatarElement &&
@@ -189,23 +192,22 @@ function applyProfile(profile) {
       profile.avatar_url;
 
   }
-
 }
 
 
 // ==========================================
-// LINKS
+// APPLY LINKS
 // ==========================================
 
 function applyLinks(links) {
 
   const container =
-    document.querySelector(".links-container");
+    document.getElementById("links");
 
   if (!container) {
-    console.warn("links-container tidak ditemukan.");
     return;
   }
+
 
   container.innerHTML = "";
 
@@ -215,19 +217,23 @@ function applyLinks(links) {
     const a =
       document.createElement("a");
 
-    a.href = link.url || "#";
+    a.href =
+      link.url || "#";
 
-    a.className = "link-card";
+    a.className =
+      "link-card";
 
-    a.target = "_blank";
+    a.target =
+      "_blank";
 
-    a.rel = "noopener noreferrer";
+    a.rel =
+      "noopener noreferrer";
 
 
     a.innerHTML = `
 
       <div class="link-icon">
-        ${link.icon || "🔗"}
+        ${escapeHtml(link.icon || "🔗")}
       </div>
 
       <div class="link-content">
@@ -238,12 +244,12 @@ function applyLinks(links) {
 
         ${
           link.description
-          ?
-          `<div class="link-description">
-             ${escapeHtml(link.description)}
-           </div>`
-          :
-          ""
+            ? `
+              <div class="link-description">
+                ${escapeHtml(link.description)}
+              </div>
+            `
+            : ""
         }
 
       </div>
@@ -259,17 +265,18 @@ function applyLinks(links) {
 
 
 // ==========================================
-// SOCIAL MEDIA
+// APPLY SOCIALS
 // ==========================================
 
 function applySocials(socials) {
 
   const container =
-    document.querySelector(".social-links");
+    document.getElementById("socialLinks");
 
   if (!container) {
     return;
   }
+
 
   container.innerHTML = "";
 
@@ -279,18 +286,23 @@ function applySocials(socials) {
     const a =
       document.createElement("a");
 
-    a.href = social.url || "#";
+    a.href =
+      social.url || "#";
 
-    a.target = "_blank";
+    a.target =
+      "_blank";
 
-    a.rel = "noopener noreferrer";
+    a.rel =
+      "noopener noreferrer";
 
-    a.className = "social-link";
+    a.className =
+      "social-link";
 
     a.setAttribute(
       "aria-label",
       social.platform || "Social"
     );
+
 
     a.innerHTML =
       social.icon || "🔗";
@@ -304,7 +316,7 @@ function applySocials(socials) {
 
 
 // ==========================================
-// THEME
+// APPLY THEME
 // ==========================================
 
 function applyTheme(theme) {
