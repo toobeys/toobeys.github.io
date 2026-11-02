@@ -81,6 +81,8 @@ button{cursor:pointer}
   transition:.22s;min-height:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:5px
 }
+.nav button{aspect-ratio:1 / 1;height:auto;min-height:0;padding:8px;border-radius:12px}
+.nav button .tab-icon{font-size:20px;line-height:1}.nav button .tab-label{font-size:11px;line-height:1.1}
 .nav button:hover{background:rgba(59,130,246,.08);color:#e2e8f0;border-color:rgba(96,165,250,.1)}
 .tab-icon{font-size:20px;line-height:1}
 .tab-label{font-size:11px;line-height:1}
@@ -233,7 +235,7 @@ input[type=file]{display:none}
   .nav button{font-size:20px;text-align:center;padding:8px 4px;border-radius:12px;height:64px;gap:4px}
   .main{margin-left:68px;width:calc(100% - 68px)}
   .topbar{height:auto;min-height:70px;padding:12px 16px}.top-sub{display:none}
-  .content-wrap{padding:16px}.preview-layout{position:static}.grid2,.link-grid,.color-row,.profile-layout{grid-template-columns:1fr}
+  .content-wrap{padding:16px}.grid2,.link-grid,.color-row,.profile-layout{grid-template-columns:1fr}
   .design-grid{grid-template-columns:1fr 1fr}.profile-layout{gap:18px}
   .savebar{position:sticky;bottom:8px}
 }
@@ -246,13 +248,14 @@ input[type=file]{display:none}
 .preview-head strong{display:block;font-size:14px;color:#f8fafc}
 .preview-head span{display:block;font-size:11px;color:#64748b;margin-top:3px}
 .persistent-preview .preview-phone{height:calc(100vh - 145px);min-height:520px;max-height:760px}
-.persistent-preview iframe{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.28) transparent}
-.persistent-preview iframe::-webkit-scrollbar{width:5px}
-.persistent-preview iframe::-webkit-scrollbar-track{background:transparent}
-.persistent-preview iframe::-webkit-scrollbar-thumb{background:rgba(148,163,184,.24);border-radius:999px}
-.persistent-preview iframe::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.42)}
+.persistent-preview .preview-phone{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.22) transparent}
+.persistent-preview .preview-phone::-webkit-scrollbar{width:5px}
+.persistent-preview .preview-phone::-webkit-scrollbar-track{background:transparent}
+.persistent-preview .preview-phone::-webkit-scrollbar-thumb{background:rgba(148,163,184,.20);border-radius:999px}
+.persistent-preview .preview-phone::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.38)}
+.persistent-preview iframe{display:block}
 @media(max-width:1100px){.dashboard-workspace{grid-template-columns:minmax(0,1fr) 320px}.persistent-preview .preview-phone{height:600px;min-height:0}}
-@media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}}
+@media(max-width:900px){.dashboard-workspace{grid-template-columns:1fr}.persistent-preview{position:relative;top:auto}.persistent-preview .preview-phone{height:620px}.persistent-preview{order:2}.editor-column{order:1}}
 </style>
 </head>
 
@@ -441,16 +444,22 @@ input[type=file]{display:none}
         </div>
       </div>
 
-      <div class="card preview-layout">
-        <div>
-          <h3 style="margin:0">Live Preview</h3>
-          <p class="help">Tampilan website publik.</p>
-        </div>
-        <div class="preview-phone">
-          <iframe id="previewFrame" title="Preview Website"></iframe>
-        </div>
-      </div>
     </section>
+
+    </div>
+
+    <aside class="persistent-preview">
+      <div class="preview-head">
+        <div>
+          <strong>Live Preview</strong>
+          <span>Preview website publik • selalu tampil</span>
+        </div>
+        <span>● Live</span>
+      </div>
+      <div class="preview-phone">
+        <iframe id="previewFrame" title="Live Preview Website" loading="eager"></iframe>
+      </div>
+    </aside>
 
     <div class="savebar">
       <div id="saveStatus" class="status">Perubahan belum disimpan.</div>
@@ -912,6 +921,34 @@ function updateDesignSelection(){
 function refreshPreview(){
   const frame = $("previewFrame");
   if(!frame) return;
+
+  frame.onload = () => {
+    try{
+      const doc = frame.contentDocument;
+      if(!doc) return;
+      const oldStyle = doc.getElementById("adminPreviewScrollbar");
+      if(oldStyle) oldStyle.remove();
+      const style = doc.createElement("style");
+      style.id = "adminPreviewScrollbar";
+      style.textContent = `
+        html, body {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(148,163,184,.28) transparent;
+        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(148,163,184,.22);
+          border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(148,163,184,.40);
+        }
+      `;
+      doc.head.appendChild(style);
+    }catch(e){ console.debug("Preview scrollbar styling skipped", e); }
+  };
+
   frame.src = "./?preview=1&t=" + Date.now();
 }
 
