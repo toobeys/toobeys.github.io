@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Dashboard Admin - Nendar</title>
+  <title>Admin — Nendar Link</title>
 
   <style>
     * {
@@ -14,82 +14,101 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at 10% 10%, rgba(59,130,246,.22), transparent 35%),
-        radial-gradient(circle at 90% 90%, rgba(139,92,246,.22), transparent 35%),
-        #07111f;
+        radial-gradient(circle at 10% 10%, rgba(59,130,246,.20), transparent 35%),
+        radial-gradient(circle at 90% 20%, rgba(139,92,246,.18), transparent 35%),
+        #071126;
       color: #fff;
-      padding: 24px;
+      padding: 30px 16px 60px;
     }
 
-    .container {
-      max-width: 900px;
+    .admin-page {
+      width: min(100%, 900px);
       margin: auto;
     }
 
-    header {
+    .admin-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 15px;
       margin-bottom: 25px;
     }
 
-    h1 {
+    .admin-header h1 {
       margin: 0;
       font-size: 28px;
     }
 
-    .subtitle {
-      margin-top: 5px;
-      opacity: .65;
+    .admin-header p {
+      margin: 6px 0 0;
+      color: #9ca3af;
+      font-size: 14px;
     }
 
     button {
       border: 0;
-      border-radius: 10px;
-      padding: 11px 16px;
       cursor: pointer;
-      font-weight: bold;
+      font: inherit;
     }
 
-    .logout {
-      background: rgba(255,255,255,.1);
-      color: white;
-      border: 1px solid rgba(255,255,255,.15);
+    .logout-btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.12);
     }
 
-    .card {
-      margin-bottom: 20px;
-      padding: 24px;
+    .logout-btn:hover {
+      background: rgba(255,255,255,.14);
+    }
+
+    .panel {
+      background: rgba(15,23,42,.72);
+      border: 1px solid rgba(255,255,255,.10);
       border-radius: 20px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.1);
-      backdrop-filter: blur(20px);
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.20);
+      backdrop-filter: blur(16px);
     }
 
-    .card h2 {
-      margin-top: 0;
+    .panel h2 {
+      margin: 0 0 18px;
+      font-size: 19px;
     }
 
-    label {
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
       display: block;
-      margin: 15px 0 7px;
-      font-size: 14px;
-      opacity: .8;
+      margin-bottom: 7px;
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 600;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.15);
-      background: rgba(0,0,0,.2);
-      color: white;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 11px;
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      padding: 11px 12px;
       outline: none;
+      font: inherit;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #3b82f6;
     }
 
     textarea {
@@ -97,461 +116,1915 @@
       resize: vertical;
     }
 
+    select option {
+      background: #111827;
+      color: #fff;
+    }
+
+    .profile-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .profile-preview img {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.15);
+    }
+
+    .profile-preview strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .profile-preview span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
     .link-item {
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
       padding: 18px;
-      margin-top: 15px;
-      border-radius: 15px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 16px;
+      background: rgba(255,255,255,.035);
     }
 
-    .save {
-      width: 100%;
-      margin-top: 10px;
-      padding: 15px;
-      color: white;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      font-size: 16px;
+    .link-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    #message {
+    .link-number {
+      font-weight: 700;
+      color: #93c5fd;
+    }
+
+    .link-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .link-status input {
+      width: auto;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .media-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .media-option {
+      flex: 1;
+      position: relative;
+    }
+
+    .media-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .media-option label {
+      display: block;
       text-align: center;
-      margin-top: 15px;
+      padding: 11px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .media-option input:checked + label {
+      border-color: #3b82f6;
+      background: rgba(59,130,246,.16);
+      color: #bfdbfe;
+    }
+
+    .icon-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .icon-preview {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .thumbnail-area {
+      display: none;
+    }
+
+    .thumbnail-area.active {
+      display: block;
+    }
+
+    .thumbnail-preview {
+      width: 100%;
+      max-width: 180px;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    .upload-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .small-btn {
+      padding: 9px 13px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .small-btn:hover {
+      background: rgba(255,255,255,.13);
+    }
+
+    .delete-thumb {
+      background: rgba(239,68,68,.12);
+      color: #fca5a5;
+    }
+
+    .save-area {
+      position: sticky;
+      bottom: 15px;
+      z-index: 20;
+      padding-top: 5px;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 14px;
+      background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #8b5cf6
+      );
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 10px 30px rgba(59,130,246,.25);
+    }
+
+    .save-btn:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .message {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 14px;
       min-height: 20px;
     }
 
-    .loading {
-      opacity: .6;
-      text-align: center;
-      padding: 30px;
+    .success {
+      color: #86efac;
     }
 
-    @media (max-width: 600px) {
+    .error {
+      color: #fca5a5;
+    }
+
+    .loading {
+      color: #93c5fd;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-row input[type="color"] {
+      width: 55px;
+      height: 42px;
+      padding: 3px;
+      cursor: pointer;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .switch-row input {
+      width: auto;
+    }
+
+    @media (max-width: 650px) {
+
       body {
-        padding: 15px;
+        padding: 20px 12px 50px;
       }
 
-      header {
+      .admin-header {
         align-items: flex-start;
       }
 
-      h1 {
+      .admin-header h1 {
         font-size: 23px;
       }
+
+      .two-column,
+      .theme-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 17px;
+      }
+
     }
   </style>
 </head>
 
 <body>
 
-<div class="container">
+  <main class="admin-page">
 
-  <header>
-
-    <div>
-      <h1>Admin Dashboard</h1>
-      <div class="subtitle">
-        Kelola Link-in-Bio Nendar
+    <header class="admin-header">
+      <div>
+        <h1>⚙️ Admin Nendar</h1>
+        <p>Kelola halaman Link in Bio</p>
       </div>
+
+      <button
+        class="logout-btn"
+        id="logoutBtn"
+        type="button"
+      >
+        Logout
+      </button>
+    </header>
+
+
+    <!-- PROFILE -->
+
+    <section class="panel">
+
+      <h2>👤 Profile</h2>
+
+      <div class="profile-preview">
+        <img
+          id="profileAvatarPreview"
+          src="profile.png"
+          alt="Preview profile"
+        >
+
+        <div>
+          <strong id="profilePreviewName">
+            Nendar
+          </strong>
+
+          <span>
+            Preview informasi profile
+          </span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="profileName">
+          Nama
+        </label>
+
+        <input
+          id="profileName"
+          type="text"
+          placeholder="Nendar"
+        >
+      </div>
+
+      <div class="field">
+        <label for="profileSubtitle">
+          Subtitle
+        </label>
+
+        <input
+          id="profileSubtitle"
+          type="text"
+          placeholder="Gaming • Creator"
+        >
+      </div>
+
+      <div class="field">
+        <label for="profileBio">
+          Bio / Pesan
+        </label>
+
+        <textarea
+          id="profileBio"
+          placeholder="Terima kasih sudah berkunjung!"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="profileAvatarUrl">
+          URL Foto Profil
+        </label>
+
+        <input
+          id="profileAvatarUrl"
+          type="text"
+          placeholder="profile.png"
+        >
+      </div>
+
+    </section>
+
+
+    <!-- LINKS -->
+
+    <section class="panel">
+
+      <h2>🔗 Link Utama</h2>
+
+      <div id="linksContainer">
+        <div class="loading">
+          Memuat link...
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- THEME -->
+
+    <section class="panel">
+
+      <h2>🎨 Tema</h2>
+
+      <div class="theme-grid">
+
+        <div class="field">
+          <label for="backgroundType">
+            Background
+          </label>
+
+          <select id="backgroundType">
+
+            <option value="aurora">
+              Aurora
+            </option>
+
+            <option value="gradient">
+              Gradient
+            </option>
+
+          </select>
+        </div>
+
+
+        <div class="field">
+          <label for="cardStyle">
+            Card Style
+          </label>
+
+          <select id="cardStyle">
+
+            <option value="glass">
+              Glass
+            </option>
+
+            <option value="solid">
+              Solid
+            </option>
+
+          </select>
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Primary Color
+          </label>
+
+          <div class="color-row">
+
+            <input
+              id="primaryColor"
+              type="color"
+              value="#3b82f6"
+            >
+
+            <input
+              id="primaryColorText"
+              type="text"
+              value="#3b82f6"
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Secondary Color
+          </label>
+
+          <div class="color-row">
+
+            <input
+              id="secondaryColor"
+              type="color"
+              value="#8b5cf6"
+            >
+
+            <input
+              id="secondaryColorText"
+              type="text"
+              value="#8b5cf6"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="switch-row">
+
+        <div>
+          <strong>Mode Gelap</strong>
+
+          <div style="color:#94a3b8;font-size:13px;margin-top:3px;">
+            Gunakan tampilan dark mode sebagai default
+          </div>
+        </div>
+
+        <input
+          id="darkMode"
+          type="checkbox"
+          checked
+        >
+
+      </div>
+
+    </section>
+
+
+    <!-- SAVE -->
+
+    <div class="save-area">
+
+      <button
+        class="save-btn"
+        id="saveBtn"
+        type="button"
+      >
+        💾 Simpan Semua Perubahan
+      </button>
+
+      <div
+        class="message"
+        id="message"
+      ></div>
+
     </div>
 
-    <button class="logout" id="logoutButton">
-      Logout
-    </button>
+  </main>
 
-  </header>
 
+  <!-- SUPABASE -->
 
-  <!-- PROFIL -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <div class="card">
 
-    <h2>👤 Profil</h2>
+  <script>
 
-    <label>Nama</label>
-    <input id="profileName" type="text">
+    /* =====================================================
+       SUPABASE CONFIG
+       ===================================================== */
 
-    <label>Subtitle</label>
-    <input id="profileSubtitle" type="text">
+    const SUPABASE_URL =
+      "MASUKKAN_SUPABASE_URL_DI_SINI";
 
-    <label>Bio</label>
-    <textarea id="profileBio"></textarea>
+    const SUPABASE_KEY =
+      "MASUKKAN_SUPABASE_PUBLISHABLE_KEY_DI_SINI";
 
-  </div>
 
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
-  <!-- LINK -->
 
-  <div class="card">
+    /* =====================================================
+       STATE
+       ===================================================== */
 
-    <h2>🔗 Link</h2>
+    let links = [];
 
-    <div id="linksContainer">
-      <div class="loading">
-        Memuat link...
-      </div>
-    </div>
+    let profile = null;
 
-  </div>
+    let theme = null;
 
 
-  <!-- TEMA -->
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
 
-  <div class="card">
+    const linksContainer =
+      document.getElementById(
+        "linksContainer"
+      );
 
-    <h2>🎨 Tema</h2>
+    const saveBtn =
+      document.getElementById(
+        "saveBtn"
+      );
 
-    <label>Background</label>
+    const message =
+      document.getElementById(
+        "message"
+      );
 
-    <select id="backgroundType">
-      <option value="aurora">Aurora</option>
-      <option value="plain">Plain</option>
-    </select>
 
-    <label>Warna Utama</label>
-    <input id="primaryColor" type="text">
+    /* =====================================================
+       INIT
+       ===================================================== */
 
-    <label>Warna Sekunder</label>
-    <input id="secondaryColor" type="text">
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
 
-    <label>Style Card</label>
 
-    <select id="cardStyle">
-      <option value="glass">Glass</option>
-      <option value="solid">Solid</option>
-    </select>
+    async function init() {
 
-    <label>Dark Mode</label>
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
 
-    <select id="darkMode">
-      <option value="true">Aktif</option>
-      <option value="false">Nonaktif</option>
-    </select>
 
-  </div>
+      if (!session) {
 
+        window.location.href =
+          "admin.html";
 
-  <button class="save" id="saveButton">
-    💾 Simpan Semua Perubahan
-  </button>
+        return;
 
-  <div id="message"></div>
+      }
 
-</div>
 
+      await loadData();
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    }
 
-<script>
 
-const SUPABASE_URL = "https://arcnrdjnlxcauhiplgfr.supabase.co";
-const SUPABASE_KEY = "sb_publishable_lMT3wM9dhoC6nuF5-b5w5g_suNRS3qD";
+    /* =====================================================
+       LOAD DATA
+       ===================================================== */
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+    async function loadData() {
 
+      setMessage(
+        "Memuat data...",
+        "loading"
+      );
 
-// ============================
-// CEK LOGIN
-// ============================
 
-async function checkLogin() {
+      try {
 
-  const { data } = await supabaseClient.auth.getSession();
+        const [
+          profileResult,
+          linksResult,
+          themeResult
+        ] = await Promise.all([
 
-  if (!data.session) {
-    window.location.href = "admin.html";
-    return false;
-  }
+          supabaseClient
+            .from("profiles")
+            .select("*")
+            .limit(1)
+            .maybeSingle(),
 
-  return true;
-}
+          supabaseClient
+            .from("links")
+            .select("*")
+            .order(
+              "sort_order",
+              {
+                ascending: true
+              }
+            ),
 
+          supabaseClient
+            .from("themes")
+            .select("*")
+            .limit(1)
+            .maybeSingle()
 
-// ============================
-// LOAD DATA
-// ============================
+        ]);
 
-async function loadData() {
 
-  // PROFIL
+        if (profileResult.error) {
+          throw profileResult.error;
+        }
 
-  const { data: profile } =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .limit(1)
-      .single();
+        if (linksResult.error) {
+          throw linksResult.error;
+        }
 
-  if (profile) {
+        if (themeResult.error) {
+          throw themeResult.error;
+        }
 
-    document.getElementById("profileName").value =
-      profile.name || "";
 
-    document.getElementById("profileSubtitle").value =
-      profile.subtitle || "";
+        profile =
+          profileResult.data;
 
-    document.getElementById("profileBio").value =
-      profile.bio || "";
-  }
 
+        links =
+          linksResult.data || [];
 
-  // LINK
 
-  const { data: links } =
-    await supabaseClient
-      .from("links")
-      .select("*")
-      .order("sort_order");
+        theme =
+          themeResult.data;
 
-  const container =
-    document.getElementById("linksContainer");
 
-  container.innerHTML = "";
+        fillProfile();
 
-  if (links && links.length) {
+        renderLinks();
 
-    links.forEach((link, index) => {
+        fillTheme();
 
-      const div = document.createElement("div");
 
-      div.className = "link-item";
+        setMessage(
+          "",
+          ""
+        );
 
-      div.innerHTML = `
 
-        <label>Judul Link ${index + 1}</label>
+      } catch (error) {
 
-        <input
-          class="link-title"
-          data-id="${link.id}"
-          value="${link.title || ""}"
-        >
+        console.error(error);
 
-        <label>Deskripsi</label>
+        setMessage(
+          "Gagal memuat data: " +
+          error.message,
+          "error"
+        );
 
-        <input
-          class="link-description"
-          data-id="${link.id}"
-          value="${link.description || ""}"
-        >
+      }
 
-        <label>URL</label>
+    }
 
-        <input
-          class="link-url"
-          data-id="${link.id}"
-          value="${link.url || ""}"
-        >
 
-      `;
+    /* =====================================================
+       PROFILE
+       ===================================================== */
 
-      container.appendChild(div);
+    function fillProfile() {
 
-    });
+      if (!profile) {
+        return;
+      }
 
-  } else {
 
-    container.innerHTML =
-      "<div class='loading'>Belum ada link.</div>";
-  }
+      document.getElementById(
+        "profileName"
+      ).value =
+        profile.name || "";
 
 
-  // TEMA
+      document.getElementById(
+        "profileSubtitle"
+      ).value =
+        profile.subtitle || "";
 
-  const { data: theme } =
-    await supabaseClient
-      .from("themes")
-      .select("*")
-      .limit(1)
-      .single();
 
-  if (theme) {
+      document.getElementById(
+        "profileBio"
+      ).value =
+        profile.bio || "";
 
-    document.getElementById("backgroundType").value =
-      theme.background_type || "aurora";
 
-    document.getElementById("primaryColor").value =
-      theme.primary_color || "#3b82f6";
+      document.getElementById(
+        "profileAvatarUrl"
+      ).value =
+        profile.avatar_url || "profile.png";
 
-    document.getElementById("secondaryColor").value =
-      theme.secondary_color || "#8b5cf6";
 
-    document.getElementById("cardStyle").value =
-      theme.card_style || "glass";
+      document.getElementById(
+        "profilePreviewName"
+      ).textContent =
+        profile.name || "Nendar";
 
-    document.getElementById("darkMode").value =
-      String(theme.dark_mode);
-  }
 
-}
+      document.getElementById(
+        "profileAvatarPreview"
+      ).src =
+        profile.avatar_url ||
+        "profile.png";
 
+    }
 
-// ============================
-// SIMPAN DATA
-// ============================
 
-async function saveData() {
+    /* =====================================================
+       RENDER LINKS
+       ===================================================== */
 
-  const message =
-    document.getElementById("message");
+    function renderLinks() {
 
-  const button =
-    document.getElementById("saveButton");
+      linksContainer.innerHTML = "";
 
-  button.disabled = true;
-  button.textContent = "Menyimpan...";
 
-  message.textContent = "";
+      if (!links.length) {
 
+        linksContainer.innerHTML = `
+          <p style="color:#94a3b8;">
+            Belum ada link.
+          </p>
+        `;
 
-  // PROFIL
+        return;
 
-  const { data: profile } =
-    await supabaseClient
-      .from("profiles")
-      .select("id")
-      .limit(1)
-      .single();
+      }
 
-  if (profile) {
 
-    await supabaseClient
-      .from("profiles")
-      .update({
-        name:
-          document.getElementById("profileName").value,
+      links.forEach(
+        (link, index) => {
 
-        subtitle:
-          document.getElementById("profileSubtitle").value,
+          const item =
+            document.createElement(
+              "div"
+            );
 
-        bio:
-          document.getElementById("profileBio").value,
+          item.className =
+            "link-item";
 
-        updated_at:
-          new Date().toISOString()
-      })
-      .eq("id", profile.id);
-  }
 
+          item.dataset.id =
+            link.id;
 
-  // LINK
 
-  const titles =
-    document.querySelectorAll(".link-title");
+          const mediaType =
+            link.media_type ||
+            "icon";
 
-  const descriptions =
-    document.querySelectorAll(".link-description");
 
-  const urls =
-    document.querySelectorAll(".link-url");
+          item.innerHTML = `
 
+            <div class="link-header">
 
-  for (let i = 0; i < titles.length; i++) {
+              <div class="link-number">
+                LINK ${index + 1}
+              </div>
 
-    await supabaseClient
-      .from("links")
-      .update({
+              <label class="link-status">
 
-        title: titles[i].value,
+                <input
+                  type="checkbox"
+                  class="active-input"
+                  ${link.is_active ? "checked" : ""}
+                >
 
-        description:
-          descriptions[i].value,
+                Aktif
 
-        url:
-          urls[i].value,
+              </label>
 
-        updated_at:
-          new Date().toISOString()
+            </div>
 
-      })
-      .eq("id", titles[i].dataset.id);
-  }
 
+            <div class="two-column">
 
-  // TEMA
+              <div class="field">
 
-  const { data: theme } =
-    await supabaseClient
-      .from("themes")
-      .select("id")
-      .limit(1)
-      .single();
+                <label>
+                  Judul
+                </label>
 
-  if (theme) {
+                <input
+                  type="text"
+                  class="title-input"
+                  value="${escapeHtml(link.title || "")}"
+                  placeholder="Judul link"
+                >
 
-    await supabaseClient
-      .from("themes")
-      .update({
+              </div>
 
-        background_type:
-          document.getElementById("backgroundType").value,
 
-        primary_color:
-          document.getElementById("primaryColor").value,
+              <div class="field">
 
-        secondary_color:
-          document.getElementById("secondaryColor").value,
+                <label>
+                  Urutan
+                </label>
 
-        card_style:
-          document.getElementById("cardStyle").value,
+                <input
+                  type="number"
+                  class="order-input"
+                  value="${Number(link.sort_order || 0)}"
+                >
 
-        dark_mode:
-          document.getElementById("darkMode").value === "true",
+              </div>
 
-        updated_at:
-          new Date().toISOString()
+            </div>
 
-      })
-      .eq("id", theme.id);
-  }
 
+            <div class="field">
 
-  message.textContent =
-    "✅ Perubahan berhasil disimpan.";
+              <label>
+                Deskripsi
+              </label>
 
-  button.disabled = false;
-  button.textContent =
-    "💾 Simpan Semua Perubahan";
-}
+              <input
+                type="text"
+                class="description-input"
+                value="${escapeHtml(link.description || "")}"
+                placeholder="Deskripsi singkat"
+              >
 
+            </div>
 
-// ============================
-// LOGOUT
-// ============================
 
-document
-  .getElementById("logoutButton")
-  .addEventListener("click", async () => {
+            <div class="field">
 
-    await supabaseClient.auth.signOut();
+              <label>
+                URL
+              </label>
 
-    window.location.href = "admin.html";
+              <input
+                type="url"
+                class="url-input"
+                value="${escapeHtml(link.url || "")}"
+                placeholder="https://..."
+              >
 
-  });
+            </div>
 
 
-// ============================
-// START
-// ============================
+            <div class="field">
 
-(async () => {
+              <label>
+                Tampilan Link
+              </label>
 
-  const loggedIn = await checkLogin();
 
-  if (loggedIn) {
-    await loadData();
-  }
+              <div class="media-options">
 
-})();
+                <div class="media-option">
 
+                  <input
+                    type="radio"
+                    id="icon-${link.id}"
+                    name="media-${link.id}"
+                    value="icon"
+                    ${mediaType === "icon" ? "checked" : ""}
+                  >
 
-document
-  .getElementById("saveButton")
-  .addEventListener("click", saveData);
+                  <label for="icon-${link.id}">
+                    😀 Icon
+                  </label>
 
-</script>
+                </div>
+
+
+                <div class="media-option">
+
+                  <input
+                    type="radio"
+                    id="thumbnail-${link.id}"
+                    name="media-${link.id}"
+                    value="thumbnail"
+                    ${mediaType === "thumbnail" ? "checked" : ""}
+                  >
+
+                  <label for="thumbnail-${link.id}">
+                    🖼️ Thumbnail
+                  </label>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="icon-area"
+              style="${mediaType === "icon" ? "" : "display:none;"}"
+            >
+
+              <div class="field">
+
+                <label>
+                  Icon
+                </label>
+
+                <div class="icon-box">
+
+                  <div class="icon-preview">
+                    ${escapeHtml(link.icon || "🔗")}
+                  </div>
+
+                  <input
+                    type="text"
+                    class="icon-input"
+                    value="${escapeHtml(link.icon || "🔗")}"
+                    placeholder="🎮"
+                    maxlength="10"
+                  >
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="thumbnail-area ${mediaType === "thumbnail" ? "active" : ""}"
+            >
+
+              <div class="field">
+
+                <label>
+                  Thumbnail
+                </label>
+
+
+                <img
+                  class="thumbnail-preview"
+                  src="${escapeHtml(link.thumbnail_url || placeholderImage())}"
+                  alt="Thumbnail"
+                  onerror="this.src='${placeholderImage()}'"
+                >
+
+
+                <div class="upload-row">
+
+                  <input
+                    type="file"
+                    class="file-input"
+                    accept="image/png,image/jpeg,image/webp"
+                  >
+
+                  <button
+                    type="button"
+                    class="small-btn upload-btn"
+                  >
+                    🖼️ Pilih Gambar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="small-btn delete-thumb"
+                  >
+                    🗑️ Hapus
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+
+          linksContainer.appendChild(
+            item
+          );
+
+
+          setupLinkEvents(
+            item,
+            link
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       LINK EVENTS
+       ===================================================== */
+
+    function setupLinkEvents(
+      item,
+      link
+    ) {
+
+      const iconRadios =
+        item.querySelectorAll(
+          `input[name="media-${link.id}"]`
+        );
+
+
+      const iconArea =
+        item.querySelector(
+          ".icon-area"
+        );
+
+
+      const thumbnailArea =
+        item.querySelector(
+          ".thumbnail-area"
+        );
+
+
+      iconRadios.forEach(
+        radio => {
+
+          radio.addEventListener(
+            "change",
+            () => {
+
+              if (
+                radio.value ===
+                "thumbnail"
+              ) {
+
+                iconArea.style.display =
+                  "none";
+
+                thumbnailArea.classList
+                  .add("active");
+
+              } else {
+
+                iconArea.style.display =
+                  "";
+
+                thumbnailArea.classList
+                  .remove("active");
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+
+      const iconInput =
+        item.querySelector(
+          ".icon-input"
+        );
+
+
+      const iconPreview =
+        item.querySelector(
+          ".icon-preview"
+        );
+
+
+      iconInput.addEventListener(
+        "input",
+        () => {
+
+          iconPreview.textContent =
+            iconInput.value ||
+            "🔗";
+
+        }
+      );
+
+
+      const fileInput =
+        item.querySelector(
+          ".file-input"
+        );
+
+
+      const uploadBtn =
+        item.querySelector(
+          ".upload-btn"
+        );
+
+
+      const thumbnailPreview =
+        item.querySelector(
+          ".thumbnail-preview"
+        );
+
+
+      uploadBtn.addEventListener(
+        "click",
+        () => {
+
+          fileInput.click();
+
+        }
+      );
+
+
+      fileInput.addEventListener(
+        "change",
+        () => {
+
+          const file =
+            fileInput.files[0];
+
+
+          if (!file) {
+            return;
+          }
+
+
+          /*
+           * Preview lokal terlebih dahulu.
+           */
+
+          const localUrl =
+            URL.createObjectURL(
+              file
+            );
+
+
+          thumbnailPreview.src =
+            localUrl;
+
+        }
+      );
+
+
+      const deleteBtn =
+        item.querySelector(
+          ".delete-thumb"
+        );
+
+
+      deleteBtn.addEventListener(
+        "click",
+        () => {
+
+          link.thumbnail_url =
+            null;
+
+          fileInput.value =
+            "";
+
+          thumbnailPreview.src =
+            placeholderImage();
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       THEME
+       ===================================================== */
+
+    function fillTheme() {
+
+      if (!theme) {
+        return;
+      }
+
+
+      document.getElementById(
+        "backgroundType"
+      ).value =
+        theme.background_type ||
+        "aurora";
+
+
+      document.getElementById(
+        "cardStyle"
+      ).value =
+        theme.card_style ||
+        "glass";
+
+
+      setColor(
+        "primaryColor",
+        "primaryColorText",
+        theme.primary_color ||
+        "#3b82f6"
+      );
+
+
+      setColor(
+        "secondaryColor",
+        "secondaryColorText",
+        theme.secondary_color ||
+        "#8b5cf6"
+      );
+
+
+      document.getElementById(
+        "darkMode"
+      ).checked =
+        theme.dark_mode !== false;
+
+    }
+
+
+    function setColor(
+      colorId,
+      textId,
+      value
+    ) {
+
+      document.getElementById(
+        colorId
+      ).value =
+        value;
+
+
+      document.getElementById(
+        textId
+      ).value =
+        value;
+
+    }
+
+
+    document.getElementById(
+      "primaryColor"
+    ).addEventListener(
+      "input",
+      e => {
+
+        document.getElementById(
+          "primaryColorText"
+        ).value =
+          e.target.value;
+
+      }
+    );
+
+
+    document.getElementById(
+      "primaryColorText"
+    ).addEventListener(
+      "input",
+      e => {
+
+        if (
+          /^#[0-9A-Fa-f]{6}$/
+            .test(e.target.value)
+        ) {
+
+          document.getElementById(
+            "primaryColor"
+          ).value =
+            e.target.value;
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "secondaryColor"
+    ).addEventListener(
+      "input",
+      e => {
+
+        document.getElementById(
+          "secondaryColorText"
+        ).value =
+          e.target.value;
+
+      }
+    );
+
+
+    document.getElementById(
+      "secondaryColorText"
+    ).addEventListener(
+      "input",
+      e => {
+
+        if (
+          /^#[0-9A-Fa-f]{6}$/
+            .test(e.target.value)
+        ) {
+
+          document.getElementById(
+            "secondaryColor"
+          ).value =
+            e.target.value;
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       SAVE EVERYTHING
+       ===================================================== */
+
+    saveBtn.addEventListener(
+      "click",
+      saveAll
+    );
+
+
+    async function saveAll() {
+
+      saveBtn.disabled = true;
+
+      saveBtn.textContent =
+        "⏳ Menyimpan...";
+
+
+      setMessage(
+        "Menyimpan perubahan...",
+        "loading"
+      );
+
+
+      try {
+
+        /*
+         * PROFILE
+         */
+
+        const profileData = {
+
+          name:
+            document.getElementById(
+              "profileName"
+            ).value.trim(),
+
+          subtitle:
+            document.getElementById(
+              "profileSubtitle"
+            ).value.trim(),
+
+          bio:
+            document.getElementById(
+              "profileBio"
+            ).value.trim(),
+
+          avatar_url:
+            document.getElementById(
+              "profileAvatarUrl"
+            ).value.trim(),
+
+          updated_at:
+            new Date().toISOString()
+
+        };
+
+
+        if (!profile) {
+
+          throw new Error(
+            "Data profile tidak ditemukan."
+          );
+
+        }
+
+
+        const {
+          error:
+            profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .update(profileData)
+            .eq(
+              "id",
+              profile.id
+            );
+
+
+        if (profileError) {
+          throw profileError;
+        }
+
+
+        /*
+         * LINKS
+         */
+
+        const items =
+          linksContainer.querySelectorAll(
+            ".link-item"
+          );
+
+
+        for (
+          const item of items
+        ) {
+
+          const id =
+            Number(
+              item.dataset.id
+            );
+
+
+          const originalLink =
+            links.find(
+              l => Number(l.id) === id
+            );
+
+
+          if (!originalLink) {
+            continue;
+          }
+
+
+          const mediaType =
+            item.querySelector(
+              `input[name="media-${id}"]:checked`
+            )?.value ||
+            "icon";
+
+
+          const title =
+            item.querySelector(
+              ".title-input"
+            ).value.trim();
+
+
+          const description =
+            item.querySelector(
+              ".description-input"
+            ).value.trim();
+
+
+          const url =
+            item.querySelector(
+              ".url-input"
+            ).value.trim();
+
+
+          const icon =
+            item.querySelector(
+              ".icon-input"
+            ).value.trim();
+
+
+          const sortOrder =
+            Number(
+              item.querySelector(
+                ".order-input"
+              ).value
+            ) || 0;
+
+
+          const isActive =
+            item.querySelector(
+              ".active-input"
+            ).checked;
+
+
+          const file =
+            item.querySelector(
+              ".file-input"
+            ).files[0];
+
+
+          let thumbnailUrl =
+            originalLink.thumbnail_url ||
+            null;
+
+
+          /*
+           * UPLOAD THUMBNAIL
+           */
+
+          if (file) {
+
+            validateImage(
+              file
+            );
+
+
+            const extension =
+              getExtension(
+                file.name
+              );
+
+
+            const fileName =
+              `${id}-${Date.now()}.${extension}`;
+
+
+            const filePath =
+              `links/${fileName}`;
+
+
+            const {
+              error:
+                uploadError
+            } =
+              await supabaseClient
+                .storage
+                .from(
+                  "link-thumbnails"
+                )
+                .upload(
+                  filePath,
+                  file,
+                  {
+                    cacheControl:
+                      "3600",
+                    upsert: false
+                  }
+                );
+
+
+            if (uploadError) {
+              throw uploadError;
+            }
+
+
+            const {
+              data:
+                publicData
+            } =
+              supabaseClient
+                .storage
+                .from(
+                  "link-thumbnails"
+                )
+                .getPublicUrl(
+                  filePath
+                );
+
+
+            thumbnailUrl =
+              publicData.publicUrl;
+
+          }
+
+
+          /*
+           * UPDATE LINK
+           */
+
+          const linkData = {
+
+            title,
+
+            description,
+
+            url,
+
+            icon,
+
+            sort_order:
+              sortOrder,
+
+            is_active:
+              isActive,
+
+            media_type:
+              mediaType,
+
+            thumbnail_url:
+              thumbnailUrl,
+
+            updated_at:
+              new Date().toISOString()
+
+          };
+
+
+          const {
+            error:
+              linkError
+          } =
+            await supabaseClient
+              .from("links")
+              .update(linkData)
+              .eq(
+                "id",
+                id
+              );
+
+
+          if (linkError) {
+            throw linkError;
+          }
+
+        }
+
+
+        /*
+         * THEME
+         */
+
+        const themeData = {
+
+          background_type:
+            document.getElementById(
+              "backgroundType"
+            ).value,
+
+          primary_color:
+            document.getElementById(
+              "primaryColorText"
+            ).value,
+
+          secondary_color:
+            document.getElementById(
+              "secondaryColorText"
+            ).value,
+
+          card_style:
+            document.getElementById(
+              "cardStyle"
+            ).value,
+
+          dark_mode:
+            document.getElementById(
+              "darkMode"
+            ).checked,
+
+          updated_at:
+            new Date().toISOString()
+
+        };
+
+
+        if (theme) {
+
+          const {
+            error:
+              themeError
+          } =
+            await supabaseClient
+              .from("themes")
+              .update(themeData)
+              .eq(
+                "id",
+                theme.id
+              );
+
+
+          if (themeError) {
+            throw themeError;
+          }
+
+        }
+
+
+        /*
+         * SELESAI
+         */
+
+        setMessage(
+          "✅ Semua perubahan berhasil disimpan.",
+          "success"
+        );
+
+
+        await loadData();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        setMessage(
+          "❌ Gagal menyimpan: " +
+          error.message,
+          "error"
+        );
+
+      } finally {
+
+        saveBtn.disabled = false;
+
+        saveBtn.textContent =
+          "💾 Simpan Semua Perubahan";
+
+      }
+
+    }
+
+
+    /* =====================================================
+       LOGOUT
+       ===================================================== */
+
+    document.getElementById(
+      "logoutBtn"
+    ).addEventListener(
+      "click",
+      async () => {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
+
+        window.location.href =
+          "admin.html";
+
+      }
+    );
+
+
+    /* =====================================================
+       HELPERS
+       ===================================================== */
+
+    function setMessage(
+      text,
+      type
+    ) {
+
+      message.textContent =
+        text;
+
+      message.className =
+        "message " +
+        type;
+
+    }
+
+
+    function escapeHtml(
+      value
+    ) {
+
+      return String(value)
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
+    }
+
+
+    function getExtension(
+      filename
+    ) {
+
+      const parts =
+        filename
+          .split(".");
+
+
+      return (
+        parts[
+          parts.length - 1
+        ] || "png"
+      )
+        .toLowerCase();
+
+    }
+
+
+    function validateImage(
+      file
+    ) {
+
+      const allowed = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ];
+
+
+      if (
+        !allowed.includes(
+          file.type
+        )
+      ) {
+
+        throw new Error(
+          "Thumbnail harus PNG, JPG/JPEG, atau WEBP."
+        );
+
+      }
+
+
+      /*
+       * Maksimal 5 MB
+       */
+
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
+
+        throw new Error(
+          "Ukuran thumbnail maksimal 5 MB."
+        );
+
+      }
+
+    }
+
+
+    function placeholderImage() {
+
+      return (
+        "data:image/svg+xml," +
+        encodeURIComponent(`
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="600"
+            height="338"
+            viewBox="0 0 600 338"
+          >
+            <rect
+              width="600"
+              height="338"
+              fill="#111827"
+            />
+
+            <text
+              x="300"
+              y="180"
+              text-anchor="middle"
+              fill="#64748b"
+              font-size="32"
+              font-family="Arial"
+            >
+              No Thumbnail
+            </text>
+
+          </svg>
+        `)
+      );
+
+    }
+
+  </script>
 
 </body>
 </html>
