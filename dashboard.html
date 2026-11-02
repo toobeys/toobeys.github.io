@@ -192,6 +192,9 @@ input[type=file]{display:none}
   transition:.2s;cursor:pointer
 }
 .design-option:hover{transform:translateY(-2px);border-color:rgba(96,165,250,.3)}
+.design-option{cursor:pointer}
+.link-card input,.link-card textarea,.link-card select{transition:border-color .18s ease,box-shadow .18s ease}
+.link-card input:focus,.link-card textarea:focus,.link-card select:focus{border-color:rgba(96,165,250,.55);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
 .design-option.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.10),0 12px 30px rgba(37,99,235,.12)}
 .design-name{font-size:13px;font-weight:900;margin:9px 3px 2px}
 .design-desc{font-size:11px;color:#64748b;margin:0 3px 3px}
@@ -774,8 +777,9 @@ window.removeLink = function(index){
   setStatus("Ada perubahan yang belum disimpan.");
 };
 
-$("addLinkBtn").addEventListener("click", async () => {
+$("addLinkBtn").addEventListener("click", () => {
   const newLink = {
+    id:null,
     title:"Link Baru",
     description:"",
     url:"https://",
@@ -787,21 +791,9 @@ $("addLinkBtn").addEventListener("click", async () => {
     is_active:true
   };
 
-  const {data,error} = await supabaseClient
-    .from("links")
-    .insert(newLink)
-    .select()
-    .single();
-
-  if(error){
-    console.error(error);
-    alert("Gagal membuat link baru: " + error.message);
-    return;
-  }
-
-  links.push(data);
+  links.push(newLink);
   renderLinks();
-  setStatus("Link baru ditambahkan.");
+  setStatus("Link baru dibuat. Isi datanya lalu klik Simpan Semua.");
 });
 
 window.uploadLinkIcon = async function(index,file){
@@ -882,6 +874,12 @@ $("deleteProfileBtn").addEventListener("click", () => {
   setStatus("Foto profil akan dihapus setelah Simpan Semua.");
 });
 
+["profileName","profileSubtitle","profileBio"].forEach(id => {
+  $(id).addEventListener("input", () => {
+    setStatus("Ada perubahan yang belum disimpan.");
+  });
+});
+
 function updateColorText(source,target){
   $(source).addEventListener("input",()=>{
     $(target).value = $(source).value;
@@ -914,11 +912,29 @@ updateColorPicker("secondaryColorText","secondaryColor");
 document.querySelectorAll(".design-option").forEach(option => {
   option.addEventListener("click",()=>{
     selectedDesign = option.dataset.design;
+    applyDesignPreset(selectedDesign, true);
     updateDesignSelection();
-    setStatus("Tema dipilih. Klik Simpan Semua.");
-    refreshPreview();
   });
 });
+
+const designPresets = {
+  aurora:   { primary:"#3b82f6", secondary:"#8b5cf6", card:"glass", dark:true },
+  midnight: { primary:"#64748b", secondary:"#334155", card:"glass", dark:true },
+  ocean:    { primary:"#06b6d4", secondary:"#2563eb", card:"glass", dark:true },
+  purple:   { primary:"#a855f7", secondary:"#ec4899", card:"glass", dark:true }
+};
+
+function applyDesignPreset(name, markChanged=true){
+  const preset = designPresets[name];
+  if(!preset) return;
+  $("primaryColor").value = preset.primary;
+  $("primaryColorText").value = preset.primary;
+  $("secondaryColor").value = preset.secondary;
+  $("secondaryColorText").value = preset.secondary;
+  $("cardStyle").value = preset.card;
+  $("darkMode").checked = preset.dark;
+  if(markChanged) setStatus("Tema dipilih. Klik Simpan Semua untuk menerapkan.");
+}
 
 function updateDesignSelection(){
   document.querySelectorAll(".design-option").forEach(option=>{
@@ -1048,10 +1064,15 @@ async function saveAll(){
     for(let i=0;i<activeLinks.length;i++){
       const link = activeLinks[i];
 
+      const normalizedUrl = (link.url || "").trim();
+      if(!normalizedUrl || normalizedUrl === "https://") {
+        throw new Error(`URL untuk link "${link.title || "Link Baru"}" belum diisi.`);
+      }
+
       const payload = {
         title:(link.title || "Link Baru").trim(),
         description:link.description || "",
-        url:(link.url || "#").trim(),
+        url:normalizedUrl,
         icon:link.icon || "🔗",
         icon_url:link.icon_url || null,
         media_type:link.media_type || "icon",
