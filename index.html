@@ -85,18 +85,14 @@ a{text-decoration:none}
 <div id="portofolio" class="sec">
 <div class="kick" style="color:#FF3CAC">01 // PORTOFOLIO</div>
 <h2 class="h2">Jejak stream <span class="gt">terbaik</span></h2>
-<p class="mut" style="margin:0 0 32px">Momen, milestone, dan pencapaian dalam koleksi.</p>
+<p class="mut" style="margin:0 0 32px">Angka-angka channel sejauh ini.</p>
 <div class="grid" style="margin-bottom:24px">
 <div class="g2" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="followers">[ANGKA]</div><div style="font-weight:700">Follower</div></div>
 <div class="g3" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="viewers">[ANGKA]</div><div style="font-weight:700">Total Viewer Live</div></div>
 <div class="g4" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="likes">[ANGKA]</div><div style="font-weight:700">Total Likes</div></div>
 </div>
 <div style="margin:-4px 0 28px"><a class="btn b2" href="https://tokcounter.com/id?user=its.toobey" target="_blank" rel="noopener" data-tt-counter>Lihat live counter follower</a></div>
-<div class="grid" id="clips">
-<div class="nft"><div class="art g1" style="aspect-ratio:16/10"><div class="badge">#001</div><span class="px" style="font-size:10px;color:#0B0720">[THUMBNAIL]</span></div><div class="nm">[Judul momen / milestone]</div><div class="mut">[Game, tanggal, dan cerita singkat]</div></div>
-<div class="nft"><div class="art g5" style="aspect-ratio:16/10"><div class="badge">#002</div><span class="px" style="font-size:10px;color:#0B0720">[THUMBNAIL]</span></div><div class="nm">[Judul momen / milestone]</div><div class="mut">[Game, tanggal, dan cerita singkat]</div></div>
-<div class="nft"><div class="art g3" style="aspect-ratio:16/10"><div class="badge">#003</div><span class="px" style="font-size:10px;color:#0B0720">[THUMBNAIL]</span></div><div class="nm">[Judul momen / milestone]</div><div class="mut">[Game, tanggal, dan cerita singkat]</div></div>
-</div>
+<div class="grid" id="clips"></div>
 </div>
 
 <div id="game" class="sec">
@@ -149,7 +145,7 @@ a{text-decoration:none}
     var map={followers:d.followers,viewers:d.total_viewer_live,likes:d.total_likes};
     document.querySelectorAll('[data-stat]').forEach(function(el){
       var v=map[el.getAttribute('data-stat')];
-      if(v!==undefined&&v!==null&&v!=='')el.textContent=fmt(v);
+      if(v===undefined||v===null||v==='')return;var t=String(v).trim();el.textContent=/^[0-9]+$/.test(t)?fmt(t):t;
     });
     if(d.tiktok_username){
       var u=String(d.tiktok_username).replace('@','');
