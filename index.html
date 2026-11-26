@@ -33,6 +33,14 @@ a{text-decoration:none}
 .b4{background:linear-gradient(90deg,#FFE53B,#FF9F1C)}
 .ico{width:76px;height:76px;padding:0;border-radius:22px;display:inline-flex;align-items:center;justify-content:center}
 .b5{background:linear-gradient(135deg,#A78BFA,#22D3EE)}
+.stat{position:relative;overflow:hidden;border-radius:22px;padding:24px;box-sizing:border-box;background:linear-gradient(160deg,rgba(34,22,78,.95),rgba(14,11,42,.95));border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 0 var(--c1)}
+.stat:hover{transform:translateY(-4px)}
+.sico{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#0B0720;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.snum{font-size:56px;font-weight:700;line-height:1.05;margin-bottom:6px;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.slab{font-size:20px;font-weight:700;color:#fff}
+.sbar{position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--c1),var(--c2))}
+.cpill{display:inline-flex;align-items:center;gap:10px;min-height:44px;box-sizing:border-box;padding:10px 18px;border-radius:999px;border:1px solid rgba(34,211,238,.6);color:#22D3EE;font-weight:700;font-size:16px;background:rgba(34,211,238,.08)}
+.cpill:hover{background:rgba(34,211,238,.18)}
 .grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .nav a{color:#fff}.nav a:hover{color:#FFE53B}
 .sec{max-width:1120px;margin:0 auto;padding:88px 24px 0;box-sizing:border-box}
@@ -88,12 +96,12 @@ a{text-decoration:none}
 <div class="kick" style="color:#FF3CAC">01 // PORTOFOLIO</div>
 <h2 class="h2">Jejak stream <span class="gt">terbaik</span></h2>
 <p class="mut" style="margin:0 0 32px">Angka-angka channel sejauh ini.</p>
-<div class="grid" style="margin-bottom:24px">
-<div class="g2" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="followers">[ANGKA]</div><div style="font-weight:700">Follower</div></div>
-<div class="g3" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="viewers">[ANGKA]</div><div style="font-weight:700">Total Viewer Live</div></div>
-<div class="g4" style="border-radius:22px;padding:24px;color:#0B0720;text-align:center"><div style="font-size:44px;font-weight:700" data-stat="likes">[ANGKA]</div><div style="font-weight:700">Total Likes</div></div>
+<div class="grid" style="margin-bottom:36px">
+<div class="stat" style="--c1:#FF9F1C;--c2:#FF3CAC"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px"><div class="sico"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="px" style="font-size:9px;color:#FF9F1C;border:2px solid #FF9F1C;padding:6px 8px;line-height:1.4">TIKTOK</span></div><div class="snum" data-stat="followers">[ANGKA]</div><div class="slab">Follower</div></div>
+<div class="stat" style="--c1:#22D3EE;--c2:#8B5CF6"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px"><div class="sico"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><span class="px" style="font-size:9px;color:#22D3EE;border:2px solid #22D3EE;padding:6px 8px;line-height:1.4">60 HARI</span></div><div class="snum" data-stat="viewers">[ANGKA]</div><div class="slab">Viewer Live</div></div>
+<div class="stat" style="--c1:#7CFF6B;--c2:#22D3EE"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px"><div class="sico"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><span class="px" style="font-size:9px;color:#7CFF6B;border:2px solid #7CFF6B;padding:6px 8px;line-height:1.4">TIKTOK</span></div><div class="snum" data-stat="likes">[ANGKA]</div><div class="slab">Total Likes</div></div>
 </div>
-<div style="margin:-4px 0 28px"><a class="btn b2" href="https://tokcounter.com/id?user=its.toobey" target="_blank" rel="noopener" data-tt-counter>Lihat live counter follower</a></div>
+<div style="margin:0 0 32px"><a class="cpill" href="https://tokcounter.com/id?user=its.toobey" target="_blank" rel="noopener" data-tt-counter><span class="blink" style="color:#7CFF6B">&#9679;</span> Lihat live counter follower &rarr;</a></div>
 <div class="grid" id="clips"></div>
 </div>
 
@@ -102,9 +110,9 @@ a{text-decoration:none}
 <h2 class="h2">Koleksi game <span class="gt">andalan</span></h2>
 <p class="mut" style="margin:0 0 32px">Game yang paling sering aku mainkan. Klik untuk download atau lihat sumbernya.</p>
 <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
-<div class="nft"><div class="art g2"><div class="badge">01/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#FF9F1C">[GAME][ANDROID]</span></div><div class="nm">Super Mario Bros - Remastered</div><div class="mut" style="margin-bottom:12px"></div><a class="btn b1" href="https://toobeys.github.io/link-smbr/">Download</a></div>
-<div class="nft"><div class="art g3"><div class="badge">02/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#22D3EE">[TOOLS][PC]</span></div><div class="nm">Roms NES - Favorite</div><div class="mut" style="margin-bottom:16px">[-]</div><a class="btn b2" href="https://drive.google.com/file/d/1R2_-fKvoeXZqKGGdcQckTJF9IW-Y7uQy/view">Download</a></div>
-<div class="nft"><div class="art g5"><div class="badge">03/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#FFE53B">[TOOLS][PC]</span></div><div class="nm">Emulator</div><div class="mut" style="margin-bottom:16px">[Genre / tahun rilis]</div><a class="btn b4" href="https://www.mesen.ca/">Download</a></div>
+<div class="nft"><div class="art g2"><div class="badge">01/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#FF9F1C">[GAMES][ANDROID]</span></div><div class="nm">Super Mario Bros</div><div class="mut" style="margin-bottom:10px"></div><a class="btn b1" href="https://toobeys.github.io/link-smbr/">Download</a></div>
+<div class="nft"><div class="art g3"><div class="badge">02/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#22D3EE">[ROMS][PC]</span></div><div class="nm">Roms NES - Favorite</div><div class="mut" style="margin-bottom:16px">[-]</div><a class="btn b2" href="https://drive.google.com/file/d/1R2_-fKvoeXZqKGGdcQckTJF9IW-Y7uQy/view">Download</a></div>
+<div class="nft"><div class="art g5"><div class="badge">03/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#FFE53B">[TOOLS][PC]</span></div><div class="nm">Emulator</div><div class="mut" style="margin-bottom:16px">[-]</div><a class="btn b4" href="href="https://www.mesen.ca/">Download</a></div>
 <div class="nft"><div class="art g4"><div class="badge">04/04</div><div style="width:110px;height:80px;color:#0B0720"><div class="inv"></div></div></div><div class="ft"><span class="px" style="font-size:9px;color:#7CFF6B">[PLATFORM]</span></div><div class="nm">[Nama Game 4]</div><div class="mut" style="margin-bottom:16px">[Genre / tahun rilis]</div><a class="btn b3" href="#">Download</a></div>
 </div>
 </div>
@@ -154,7 +162,7 @@ a{text-decoration:none}
       var base='https://www.tiktok.com/@'+u;
       document.querySelectorAll('[data-tt]').forEach(function(a){a.href=base;});
       document.querySelectorAll('[data-tt-live]').forEach(function(a){a.href=base+'/live';});
-      document.querySelectorAll('[data-tt-counter]').forEach(function(a){a.href='https://tokcounter.com/id?user=its.toobey'+encodeURIComponent(u);});
+      document.querySelectorAll('[data-tt-counter]').forEach(function(a){a.href='https://tokcounter.com/id?user='+encodeURIComponent(u);});
       document.querySelectorAll('[data-tt-handle]').forEach(function(s){s.textContent='@'+u;});
     }
     var vids=(d.video_tiktok||[]).map(function(u){var m=String(u).match(/video\/(\d+)/);return m?{url:u,id:m[1]}:null;}).filter(Boolean);
